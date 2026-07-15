@@ -807,10 +807,41 @@ document
     .addEventListener("click", async () => {
         try {
             await Clerk.load({
-                ui: {
-                    ClerkUI: window.__internal_ClerkUICtor
-                }
-            });
+    ui: {
+        ClerkUI: window.__internal_ClerkUICtor
+    },
+
+    localization: {
+        locale: "de-DE",
+
+        signIn: {
+            start: {
+                title: "Bei Cardora anmelden",
+                subtitle: "Willkommen zurück! Melde dich an, um fortzufahren.",
+                actionText: "Noch kein Konto?",
+                actionLink: "Jetzt registrieren"
+            }
+        },
+
+        signUp: {
+            start: {
+                title: "Cardora-Konto erstellen",
+                subtitle: "Registriere dich, um Karten zu kaufen und zu verkaufen.",
+                actionText: "Du hast bereits ein Konto?",
+                actionLink: "Anmelden"
+            }
+        },
+
+        formFieldLabel__emailAddress: "E-Mail-Adresse",
+        formFieldLabel__password: "Passwort",
+        formFieldLabel__firstName: "Vorname",
+        formFieldLabel__lastName: "Nachname",
+        formButtonPrimary: "Weiter",
+        dividerText: "oder",
+        socialButtonsBlockButton: "Mit {{provider|titleize}} fortfahren",
+        formFieldAction__forgotPassword: "Passwort vergessen?"
+    }
+});
 
             Clerk.openSignIn();
         } catch (error) {
