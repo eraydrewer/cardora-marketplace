@@ -166,6 +166,132 @@ const defaultListings = [
         description: "Frisch aus dem Pack und sofort geschützt.",
         seller: "FootballCards",
         createdAt: "2026-07-10T19:30:00"
+    },
+    {
+        id: 13,
+        title: "Cristiano Ronaldo Topps Chrome",
+        category: "Fußballkarten",
+        condition: "Near Mint",
+        price: 74.99,
+        location: "Köln",
+        language: "Englisch",
+        shipping: "Versand möglich",
+        image: "",
+        description: "Cristiano-Ronaldo-Karte von Topps Chrome in sehr gutem Zustand.",
+        seller: "FootballCollector",
+        createdAt: "2026-07-15T10:30:00"
+    },
+    {
+        id: 14,
+        title: "Lionel Messi Panini Prizm",
+        category: "Fußballkarten",
+        condition: "Neu",
+        price: 89.00,
+        location: "Dortmund",
+        language: "Englisch",
+        shipping: "Versand oder Abholung",
+        image: "",
+        description: "Lionel-Messi-Karte von Panini Prizm, direkt nach dem Öffnen geschützt.",
+        seller: "PaniniCardsDE",
+        createdAt: "2026-07-15T10:15:00"
+    },
+    {
+        id: 15,
+        title: "Jude Bellingham Rookie Card",
+        category: "Fußballkarten",
+        condition: "Near Mint",
+        price: 129.99,
+        location: "Düsseldorf",
+        language: "Englisch",
+        shipping: "Versand möglich",
+        image: "",
+        description: "Jude-Bellingham-Rookie-Karte in hervorragendem Zustand.",
+        seller: "RookieHunter",
+        createdAt: "2026-07-15T09:50:00"
+    },
+    {
+        id: 16,
+        title: "Kylian Mbappé Topps Finest",
+        category: "Fußballkarten",
+        condition: "Excellent",
+        price: 54.50,
+        location: "Berlin",
+        language: "Englisch",
+        shipping: "Versand möglich",
+        image: "",
+        description: "Topps-Finest-Karte von Kylian Mbappé mit leichten Gebrauchsspuren.",
+        seller: "GoalCards",
+        createdAt: "2026-07-15T09:30:00"
+    },
+    {
+        id: 17,
+        title: "Michael Jordan Upper Deck",
+        category: "Basketballkarten",
+        condition: "Excellent",
+        price: 249.99,
+        location: "Hamburg",
+        language: "Englisch",
+        shipping: "Versand oder Abholung",
+        image: "",
+        description: "Michael-Jordan-Sammlerkarte von Upper Deck.",
+        seller: "BasketballVault",
+        createdAt: "2026-07-15T09:00:00"
+    },
+    {
+        id: 18,
+        title: "LeBron James Panini Prizm",
+        category: "Basketballkarten",
+        condition: "Near Mint",
+        price: 179.00,
+        location: "Frankfurt",
+        language: "Englisch",
+        shipping: "Versand möglich",
+        image: "",
+        description: "LeBron-James-Panini-Prizm-Karte im Toploader.",
+        seller: "NBACollector",
+        createdAt: "2026-07-15T08:45:00"
+    },
+    {
+        id: 19,
+        title: "Stephen Curry Select Silver",
+        category: "Basketballkarten",
+        condition: "Near Mint",
+        price: 119.99,
+        location: "München",
+        language: "Englisch",
+        shipping: "Versand möglich",
+        image: "",
+        description: "Stephen-Curry-Select-Silver-Karte in sehr gutem Zustand.",
+        seller: "CourtCards",
+        createdAt: "2026-07-15T08:15:00"
+    },
+    {
+        id: 20,
+        title: "Luka Dončić Rookie Card",
+        category: "Basketballkarten",
+        condition: "Excellent",
+        price: 299.00,
+        location: "Essen",
+        language: "Englisch",
+        shipping: "Versand oder Abholung",
+        image: "",
+        description: "Gesuchte Luka-Dončić-Rookie-Karte mit leichten Gebrauchsspuren.",
+        seller: "RookieBasket",
+        createdAt: "2026-07-15T07:50:00"
+    },
+    {
+        id: 21,
+        title: "Victor Wembanyama Rookie",
+        category: "Basketballkarten",
+        condition: "Neu",
+        price: 159.90,
+        location: "Stuttgart",
+        language: "Englisch",
+        shipping: "Versand möglich",
+        image: "",
+        description: "Victor-Wembanyama-Rookie-Karte, frisch gezogen und geschützt.",
+        seller: "NextGenCards",
+        createdAt: "2026-07-15T07:30:00"
     }
 ];
 
@@ -282,7 +408,9 @@ function getCategoryIcon(category) {
         "Yu-Gi-Oh!": "✦",
         "One Piece": "☠",
         "Magic": "✺",
-        "Sportkarten": "⚽"
+        "Sportkarten": "🏆",
+        "Fußballkarten": "⚽",
+        "Basketballkarten": "🏀"
     };
 
     return icons[category] || "◇";
