@@ -1,1 +1,1325 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
 
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Cardora – Kaufe und verkaufe Pokémon-, Yu-Gi-Oh!-, One Piece-, Magic- und weitere Sammelkarten."
+    >
+
+    <title>Cardora – Der Marktplatz für Sammelkarten</title>
+
+    <link rel="stylesheet" href="styles.css">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet"
+    >
+</head>
+
+<body>
+
+    <!-- Hintergrundeffekte -->
+
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+    <!-- Kopfbereich -->
+
+    <header class="main-header">
+
+        <div class="header-container">
+
+            <a href="#" class="logo">
+
+                <div class="logo-symbol">
+                    C
+                </div>
+
+                <div class="logo-text">
+                    CARDORA
+                    <span>MARKETPLACE</span>
+                </div>
+
+            </a>
+
+            <nav class="desktop-navigation">
+
+                <a href="#marketplace">
+                    Marktplatz
+                </a>
+
+                <a href="#categories">
+                    Kategorien
+                </a>
+
+                <a href="#advantages">
+                    So funktioniert’s
+                </a>
+
+            </nav>
+
+            <div class="header-actions">
+
+                <button
+                    class="login-button"
+                    id="loginButton"
+                    type="button"
+                >
+                    Anmelden
+                </button>
+
+                <button
+                    class="sell-button"
+                    id="openListingButton"
+                    type="button"
+                >
+                    <span>＋</span>
+                    Karte verkaufen
+                </button>
+
+                <button
+                    class="mobile-menu-button"
+                    id="mobileMenuButton"
+                    type="button"
+                    aria-label="Menü öffnen"
+                >
+                    ☰
+                </button>
+
+            </div>
+
+        </div>
+
+        <div
+            class="mobile-navigation"
+            id="mobileNavigation"
+        >
+
+            <a href="#marketplace">
+                Marktplatz
+            </a>
+
+            <a href="#categories">
+                Kategorien
+            </a>
+
+            <a href="#advantages">
+                So funktioniert’s
+            </a>
+
+            <button
+                id="mobileSellButton"
+                type="button"
+            >
+                Karte verkaufen
+            </button>
+
+        </div>
+
+    </header>
+
+    <main>
+
+        <!-- Hero-Bereich -->
+
+        <section class="hero-section">
+
+            <div class="hero-container">
+
+                <div class="hero-content">
+
+                    <div class="hero-badge">
+                        <span></span>
+                        Der neue Marktplatz für Sammler
+                    </div>
+
+                    <h1>
+                        Finde Karten,
+                        <span>die deine Sammlung verändern.</span>
+                    </h1>
+
+                    <p class="hero-description">
+                        Kaufe und verkaufe Sammelkarten sicher, einfach und
+                        direkt mit anderen Sammlern.
+                    </p>
+
+                    <form
+                        class="hero-search"
+                        id="heroSearchForm"
+                    >
+
+                        <div class="search-icon">
+                            ⌕
+                        </div>
+
+                        <input
+                            type="search"
+                            id="heroSearchInput"
+                            placeholder="Pokémon, Yu-Gi-Oh!, Glurak, Set oder Verkäufer suchen ..."
+                            autocomplete="off"
+                        >
+
+                        <button type="submit">
+                            Suchen
+                        </button>
+
+                    </form>
+
+                    <div class="popular-searches">
+
+                        <span>Beliebt:</span>
+
+                        <button
+                            class="quick-search"
+                            data-search="Glurak"
+                            type="button"
+                        >
+                            Glurak
+                        </button>
+
+                        <button
+                            class="quick-search"
+                            data-search="Pikachu"
+                            type="button"
+                        >
+                            Pikachu
+                        </button>
+
+                        <button
+                            class="quick-search"
+                            data-search="One Piece"
+                            type="button"
+                        >
+                            One Piece
+                        </button>
+
+                        <button
+                            class="quick-search"
+                            data-search="Yu-Gi-Oh!"
+                            type="button"
+                        >
+                            Yu-Gi-Oh!
+                        </button>
+
+                    </div>
+
+                    <div class="hero-statistics">
+
+                        <div class="hero-statistic">
+
+                            <strong>12.450+</strong>
+                            <span>aktive Anzeigen</span>
+
+                        </div>
+
+                        <div class="statistic-divider"></div>
+
+                        <div class="hero-statistic">
+
+                            <strong>4.800+</strong>
+                            <span>Sammler</span>
+
+                        </div>
+
+                        <div class="statistic-divider"></div>
+
+                        <div class="hero-statistic">
+
+                            <strong>98 %</strong>
+                            <span>positive Bewertungen</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="hero-showcase">
+
+                    <div class="showcase-decoration decoration-one"></div>
+                    <div class="showcase-decoration decoration-two"></div>
+
+                    <div class="floating-label label-top">
+                        <span>★</span>
+                        Seltene Karten
+                    </div>
+
+                    <article class="featured-card">
+
+                        <div class="featured-card-top">
+
+                            <span class="featured-tag">
+                                TOP ANGEBOT
+                            </span>
+
+                            <button
+                                class="favorite-button"
+                                type="button"
+                                aria-label="Zu Favoriten hinzufügen"
+                            >
+                                ♡
+                            </button>
+
+                        </div>
+
+                        <div class="featured-image">
+
+                            <div class="card-placeholder">
+
+                                <div class="card-placeholder-header">
+                                    CARDORA
+                                </div>
+
+                                <div class="card-placeholder-art">
+                                    ⚡
+                                </div>
+
+                                <div class="card-placeholder-title">
+                                    Legendary Card
+                                </div>
+
+                                <div class="card-placeholder-description">
+                                    Limitierte Sammlerkarte
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="featured-information">
+
+                            <div>
+
+                                <span class="featured-category">
+                                    Pokémon
+                                </span>
+
+                                <h3>
+                                    Pikachu Illustration Rare
+                                </h3>
+
+                            </div>
+
+                            <div class="featured-price">
+                                189,00 €
+                            </div>
+
+                        </div>
+
+                        <div class="featured-meta">
+
+                            <span>
+                                Zustand: Near Mint
+                            </span>
+
+                            <span>
+                                Deutschland
+                            </span>
+
+                        </div>
+
+                    </article>
+
+                    <div class="floating-label label-bottom">
+                        <span>✓</span>
+                        Geprüfte Verkäufer
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Vertrauensbereich -->
+
+        <section class="trust-section">
+
+            <div class="section-container trust-grid">
+
+                <div class="trust-item">
+
+                    <div class="trust-icon">
+                        ✓
+                    </div>
+
+                    <div>
+                        <strong>Sicher handeln</strong>
+                        <span>Bewertungen und verifizierte Profile</span>
+                    </div>
+
+                </div>
+
+                <div class="trust-item">
+
+                    <div class="trust-icon">
+                        €
+                    </div>
+
+                    <div>
+                        <strong>Faire Angebote</strong>
+                        <span>Direkter Handel zwischen Sammlern</span>
+                    </div>
+
+                </div>
+
+                <div class="trust-item">
+
+                    <div class="trust-icon">
+                        ◇
+                    </div>
+
+                    <div>
+                        <strong>Große Auswahl</strong>
+                        <span>Karten aus allen bekannten TCGs</span>
+                    </div>
+
+                </div>
+
+                <div class="trust-item">
+
+                    <div class="trust-icon">
+                        ⚡
+                    </div>
+
+                    <div>
+                        <strong>Schnell eingestellt</strong>
+                        <span>Anzeige in wenigen Minuten erstellen</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Kategorien -->
+
+        <section
+            class="categories-section"
+            id="categories"
+        >
+
+            <div class="section-container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-eyebrow">
+                            ENTDECKEN
+                        </span>
+
+                        <h2>
+                            Beliebte Kategorien
+                        </h2>
+
+                        <p>
+                            Wähle dein Sammelkartenspiel und entdecke aktuelle Angebote.
+                        </p>
+
+                    </div>
+
+                    <button
+                        class="text-button"
+                        id="showAllCategoriesButton"
+                        type="button"
+                    >
+                        Alle Kategorien →
+                    </button>
+
+                </div>
+
+                <div class="category-grid">
+
+                    <button
+                        class="category-card active"
+                        data-category="Alle"
+                        type="button"
+                    >
+
+                        <div class="category-icon category-all">
+                            ◈
+                        </div>
+
+                        <div>
+                            <strong>Alle Karten</strong>
+                            <span>12.450 Anzeigen</span>
+                        </div>
+
+                    </button>
+
+                    <button
+                        class="category-card"
+                        data-category="Pokémon"
+                        type="button"
+                    >
+
+                        <div class="category-icon category-pokemon">
+                            ⚡
+                        </div>
+
+                        <div>
+                            <strong>Pokémon</strong>
+                            <span>5.230 Anzeigen</span>
+                        </div>
+
+                    </button>
+
+                    <button
+                        class="category-card"
+                        data-category="Yu-Gi-Oh!"
+                        type="button"
+                    >
+
+                        <div class="category-icon category-yugioh">
+                            ✦
+                        </div>
+
+                        <div>
+                            <strong>Yu-Gi-Oh!</strong>
+                            <span>2.810 Anzeigen</span>
+                        </div>
+
+                    </button>
+
+                    <button
+                        class="category-card"
+                        data-category="One Piece"
+                        type="button"
+                    >
+
+                        <div class="category-icon category-onepiece">
+                            ☠
+                        </div>
+
+                        <div>
+                            <strong>One Piece</strong>
+                            <span>1.920 Anzeigen</span>
+                        </div>
+
+                    </button>
+
+                    <button
+                        class="category-card"
+                        data-category="Magic"
+                        type="button"
+                    >
+
+                        <div class="category-icon category-magic">
+                            ✺
+                        </div>
+
+                        <div>
+                            <strong>Magic</strong>
+                            <span>1.640 Anzeigen</span>
+                        </div>
+
+                    </button>
+
+                    <button
+                        class="category-card"
+                        data-category="Sportkarten"
+                        type="button"
+                    >
+
+                        <div class="category-icon category-sport">
+                            ⚽
+                        </div>
+
+                        <div>
+                            <strong>Sportkarten</strong>
+                            <span>850 Anzeigen</span>
+                        </div>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Marktplatz -->
+
+        <section
+            class="marketplace-section"
+            id="marketplace"
+        >
+
+            <div class="section-container">
+
+                <div class="section-heading marketplace-heading">
+
+                    <div>
+
+                        <span class="section-eyebrow">
+                            MARKTPLATZ
+                        </span>
+
+                        <h2>
+                            Aktuelle Angebote
+                        </h2>
+
+                        <p id="resultsText">
+                            Entdecke ausgewählte Sammelkarten.
+                        </p>
+
+                    </div>
+
+                    <div class="marketplace-controls">
+
+                        <select
+                            id="conditionFilter"
+                            aria-label="Nach Zustand filtern"
+                        >
+                            <option value="Alle">
+                                Alle Zustände
+                            </option>
+
+                            <option value="Neu">
+                                Neu
+                            </option>
+
+                            <option value="Near Mint">
+                                Near Mint
+                            </option>
+
+                            <option value="Excellent">
+                                Excellent
+                            </option>
+
+                            <option value="Played">
+                                Played
+                            </option>
+                        </select>
+
+                        <select
+                            id="sortFilter"
+                            aria-label="Angebote sortieren"
+                        >
+                            <option value="newest">
+                                Neueste zuerst
+                            </option>
+
+                            <option value="price-low">
+                                Preis aufsteigend
+                            </option>
+
+                            <option value="price-high">
+                                Preis absteigend
+                            </option>
+
+                            <option value="name">
+                                Name A–Z
+                            </option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div
+                    class="listing-grid"
+                    id="listingGrid"
+                >
+                    <!-- Wird durch main.js befüllt -->
+                </div>
+
+                <div
+                    class="empty-state"
+                    id="emptyState"
+                >
+
+                    <div class="empty-state-icon">
+                        ⌕
+                    </div>
+
+                    <h3>
+                        Keine Karten gefunden
+                    </h3>
+
+                    <p>
+                        Probiere einen anderen Suchbegriff oder ändere deine Filter.
+                    </p>
+
+                    <button
+                        id="resetFiltersButton"
+                        type="button"
+                    >
+                        Filter zurücksetzen
+                    </button>
+
+                </div>
+
+                <div class="load-more-wrapper">
+
+                    <button
+                        class="load-more-button"
+                        id="loadMoreButton"
+                        type="button"
+                    >
+                        Weitere Angebote anzeigen
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Vorteile -->
+
+        <section
+            class="advantages-section"
+            id="advantages"
+        >
+
+            <div class="section-container">
+
+                <div class="advantages-header">
+
+                    <span class="section-eyebrow">
+                        EINFACH STARTEN
+                    </span>
+
+                    <h2>
+                        In drei Schritten zur neuen Karte
+                    </h2>
+
+                    <p>
+                        Kaufen und verkaufen war noch nie so einfach.
+                    </p>
+
+                </div>
+
+                <div class="steps-grid">
+
+                    <article class="step-card">
+
+                        <div class="step-number">
+                            01
+                        </div>
+
+                        <div class="step-icon">
+                            ⌕
+                        </div>
+
+                        <h3>
+                            Karte entdecken
+                        </h3>
+
+                        <p>
+                            Suche nach Spiel, Edition, Kartennummer, Zustand oder Preis.
+                        </p>
+
+                    </article>
+
+                    <article class="step-card">
+
+                        <div class="step-number">
+                            02
+                        </div>
+
+                        <div class="step-icon">
+                            ✉
+                        </div>
+
+                        <h3>
+                            Verkäufer kontaktieren
+                        </h3>
+
+                        <p>
+                            Stelle Fragen und vereinbare Versand, Abholung oder Bezahlung.
+                        </p>
+
+                    </article>
+
+                    <article class="step-card">
+
+                        <div class="step-number">
+                            03
+                        </div>
+
+                        <div class="step-icon">
+                            ✓
+                        </div>
+
+                        <h3>
+                            Sammlung erweitern
+                        </h3>
+
+                        <p>
+                            Erhalte deine Karte und bewerte anschließend den Verkäufer.
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Verkaufsbanner -->
+
+        <section class="seller-banner-section">
+
+            <div class="section-container">
+
+                <div class="seller-banner">
+
+                    <div class="seller-banner-content">
+
+                        <span class="seller-banner-label">
+                            FÜR VERKÄUFER
+                        </span>
+
+                        <h2>
+                            Deine Karten verdienen die richtigen Käufer.
+                        </h2>
+
+                        <p>
+                            Erstelle kostenlos deine erste Anzeige und erreiche
+                            gezielt interessierte Sammler.
+                        </p>
+
+                        <button
+                            id="bannerSellButton"
+                            type="button"
+                        >
+                            Jetzt Karte einstellen
+                        </button>
+
+                    </div>
+
+                    <div class="seller-banner-visual">
+
+                        <div class="visual-card visual-card-one">
+                            <span>Pokémon</span>
+                            <strong>129 €</strong>
+                        </div>
+
+                        <div class="visual-card visual-card-two">
+                            <span>One Piece</span>
+                            <strong>79 €</strong>
+                        </div>
+
+                        <div class="visual-card visual-card-three">
+                            <span>Yu-Gi-Oh!</span>
+                            <strong>249 €</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+
+    <footer class="main-footer">
+
+        <div class="section-container footer-grid">
+
+            <div class="footer-brand">
+
+                <a href="#" class="logo">
+
+                    <div class="logo-symbol">
+                        C
+                    </div>
+
+                    <div class="logo-text">
+                        CARDORA
+                        <span>MARKETPLACE</span>
+                    </div>
+
+                </a>
+
+                <p>
+                    Der moderne Marktplatz für Sammelkarten,
+                    Sammler und Händler.
+                </p>
+
+            </div>
+
+            <div class="footer-column">
+
+                <h4>Marktplatz</h4>
+
+                <a href="#marketplace">
+                    Angebote
+                </a>
+
+                <a href="#categories">
+                    Kategorien
+                </a>
+
+                <a href="#">
+                    Gesuche
+                </a>
+
+                <a href="#">
+                    Händler
+                </a>
+
+            </div>
+
+            <div class="footer-column">
+
+                <h4>Unternehmen</h4>
+
+                <a href="#">
+                    Über uns
+                </a>
+
+                <a href="#">
+                    Kontakt
+                </a>
+
+                <a href="#">
+                    Hilfe
+                </a>
+
+                <a href="#">
+                    Sicherheit
+                </a>
+
+            </div>
+
+            <div class="footer-column">
+
+                <h4>Rechtliches</h4>
+
+                <a href="#">
+                    Impressum
+                </a>
+
+                <a href="#">
+                    Datenschutz
+                </a>
+
+                <a href="#">
+                    Nutzungsbedingungen
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="section-container footer-bottom">
+
+            <span>
+                © 2026 Cardora. Alle Rechte vorbehalten.
+            </span>
+
+            <span>
+                Mit Leidenschaft für Sammler entwickelt.
+            </span>
+
+        </div>
+
+    </footer>
+
+    <!-- Modal: Anzeige erstellen -->
+
+    <div
+        class="modal-overlay"
+        id="listingModal"
+    >
+
+        <div class="modal-window">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="modal-eyebrow">
+                        NEUE ANZEIGE
+                    </span>
+
+                    <h2>
+                        Sammelkarte verkaufen
+                    </h2>
+
+                </div>
+
+                <button
+                    class="modal-close-button"
+                    id="closeListingModal"
+                    type="button"
+                    aria-label="Fenster schließen"
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <form id="listingForm">
+
+                <div class="form-grid">
+
+                    <div class="form-group form-group-full">
+
+                        <label for="listingTitle">
+                            Titel der Anzeige
+                        </label>
+
+                        <input
+                            type="text"
+                            id="listingTitle"
+                            placeholder="z. B. Glurak Base Set Deutsch"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="listingCategory">
+                            Kategorie
+                        </label>
+
+                        <select
+                            id="listingCategory"
+                            required
+                        >
+                            <option value="">
+                                Bitte auswählen
+                            </option>
+
+                            <option value="Pokémon">
+                                Pokémon
+                            </option>
+
+                            <option value="Yu-Gi-Oh!">
+                                Yu-Gi-Oh!
+                            </option>
+
+                            <option value="One Piece">
+                                One Piece
+                            </option>
+
+                            <option value="Magic">
+                                Magic
+                            </option>
+
+                            <option value="Sportkarten">
+                                Sportkarten
+                            </option>
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="listingCondition">
+                            Zustand
+                        </label>
+
+                        <select
+                            id="listingCondition"
+                            required
+                        >
+                            <option value="">
+                                Bitte auswählen
+                            </option>
+
+                            <option value="Neu">
+                                Neu
+                            </option>
+
+                            <option value="Near Mint">
+                                Near Mint
+                            </option>
+
+                            <option value="Excellent">
+                                Excellent
+                            </option>
+
+                            <option value="Played">
+                                Played
+                            </option>
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="listingPrice">
+                            Preis in Euro
+                        </label>
+
+                        <input
+                            type="number"
+                            id="listingPrice"
+                            min="0"
+                            step="0.01"
+                            placeholder="0,00"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="listingLocation">
+                            Standort
+                        </label>
+
+                        <input
+                            type="text"
+                            id="listingLocation"
+                            placeholder="z. B. Köln"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="listingLanguage">
+                            Sprache
+                        </label>
+
+                        <select id="listingLanguage">
+
+                            <option value="Deutsch">
+                                Deutsch
+                            </option>
+
+                            <option value="Englisch">
+                                Englisch
+                            </option>
+
+                            <option value="Japanisch">
+                                Japanisch
+                            </option>
+
+                            <option value="Andere">
+                                Andere
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="listingShipping">
+                            Übergabe
+                        </label>
+
+                        <select id="listingShipping">
+
+                            <option value="Versand möglich">
+                                Versand möglich
+                            </option>
+
+                            <option value="Nur Abholung">
+                                Nur Abholung
+                            </option>
+
+                            <option value="Versand oder Abholung">
+                                Versand oder Abholung
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="form-group form-group-full">
+
+                        <label for="listingImage">
+                            Bild-URL
+                        </label>
+
+                        <input
+                            type="url"
+                            id="listingImage"
+                            placeholder="https://..."
+                        >
+
+                        <small>
+                            Für die erste Demo verwenden wir eine Bildadresse.
+                            Ein echter Upload kommt später.
+                        </small>
+
+                    </div>
+
+                    <div class="form-group form-group-full">
+
+                        <label for="listingDescription">
+                            Beschreibung
+                        </label>
+
+                        <textarea
+                            id="listingDescription"
+                            rows="5"
+                            placeholder="Beschreibe die Karte, ihren Zustand und Besonderheiten ..."
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-actions">
+
+                    <button
+                        class="secondary-modal-button"
+                        id="cancelListingButton"
+                        type="button"
+                    >
+                        Abbrechen
+                    </button>
+
+                    <button
+                        class="primary-modal-button"
+                        type="submit"
+                    >
+                        Anzeige veröffentlichen
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- Modal: Login -->
+
+    <div
+        class="modal-overlay"
+        id="loginModal"
+    >
+
+        <div class="modal-window login-modal-window">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="modal-eyebrow">
+                        WILLKOMMEN
+                    </span>
+
+                    <h2>
+                        Bei Cardora anmelden
+                    </h2>
+
+                </div>
+
+                <button
+                    class="modal-close-button"
+                    id="closeLoginModal"
+                    type="button"
+                    aria-label="Fenster schließen"
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <form id="loginForm">
+
+                <div class="form-group">
+
+                    <label for="loginEmail">
+                        E-Mail-Adresse
+                    </label>
+
+                    <input
+                        type="email"
+                        id="loginEmail"
+                        placeholder="name@beispiel.de"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="loginPassword">
+                        Passwort
+                    </label>
+
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        placeholder="Dein Passwort"
+                        required
+                    >
+
+                </div>
+
+                <button
+                    class="login-submit-button"
+                    type="submit"
+                >
+                    Anmelden
+                </button>
+
+                <p class="login-info">
+                    Die echte Registrierung und Datenbank bauen wir im nächsten Schritt ein.
+                </p>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- Benachrichtigung -->
+
+    <div
+        class="toast"
+        id="toast"
+    >
+
+        <div class="toast-icon">
+            ✓
+        </div>
+
+        <div>
+
+            <strong id="toastTitle">
+                Erfolgreich
+            </strong>
+
+            <span id="toastMessage">
+                Die Aktion wurde durchgeführt.
+            </span>
+
+        </div>
+
+    </div>
+
+    <script src="main.js"></script>
+
+</body>
+</html>
