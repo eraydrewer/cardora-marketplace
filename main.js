@@ -804,8 +804,18 @@ document
 
 document
     .getElementById("loginButton")
-    .addEventListener("click", () => {
-        openModal(loginModal);
+    .addEventListener("click", async () => {
+        try {
+            await Clerk.load();
+            Clerk.openSignIn();
+        } catch (error) {
+            console.error("Clerk konnte nicht geöffnet werden:", error);
+
+            showToast(
+                "Anmeldung nicht verfügbar",
+                "Das Anmeldefenster konnte nicht geladen werden."
+            );
+        }
     });
 
 document
