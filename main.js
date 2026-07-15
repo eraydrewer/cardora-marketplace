@@ -806,10 +806,18 @@ document
     .getElementById("loginButton")
     .addEventListener("click", async () => {
         try {
-            await Clerk.load();
+            await Clerk.load({
+                ui: {
+                    ClerkUI: window.__internal_ClerkUICtor
+                }
+            });
+
             Clerk.openSignIn();
         } catch (error) {
-            console.error("Clerk konnte nicht geöffnet werden:", error);
+            console.error(
+                "Clerk konnte nicht geöffnet werden:",
+                error
+            );
 
             showToast(
                 "Anmeldung nicht verfügbar",
