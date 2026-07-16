@@ -865,8 +865,11 @@ function updateLoginArea() {
     }
 
     if (Clerk.user) {
-        loginButton.innerHTML = "";
-        loginButton.classList.add("user-profile-button");
+
+    syncUserWithBackend();
+
+    loginButton.innerHTML = "";
+    loginButton.classList.add("user-profile-button");
 
 Clerk.mountUserButton(loginButton, {
     appearance: {
@@ -896,6 +899,34 @@ Clerk.mountUserButton(loginButton, {
         loginButton.onclick = () => {
             Clerk.openSignIn();
         };
+    }
+}
+
+async function syncUserWithBackend() {
+    try {
+        const token = await Clerk.session.getToken();
+
+        const response = await fetch(
+            "https://cardora-backend.onrender.com/api/users/sync",
+            {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+
+        console.log("Benutzer synchronisiert:", data.user);
+
+    } catch (error) {
+        console.error(error);
     }
 }
 
