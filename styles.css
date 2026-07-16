@@ -1512,3 +1512,57 @@ img{
         min-width:0;
     }
 }
+
+/* Clerk Profilbutton im Cardora-Design */
+
+.user-profile-button{
+    width:44px;
+    height:44px;
+    padding:0;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(
+        145deg,
+        #d7a94b,
+        #f0c66f
+    );
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:
+        0 8px 22px rgba(215, 169, 75, 0.22),
+        inset 0 1px 0 rgba(255,255,255,0.3);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.user-profile-button:hover{
+    transform:translateY(-2px);
+    box-shadow:
+        0 12px 28px rgba(215, 169, 75, 0.35),
+        inset 0 1px 0 rgba(255,255,255,0.35);
+}
+
+.user-profile-button .cl-avatarBox{
+    width:36px !important;
+    height:36px !important;
+    border-radius:11px !important;
+    border:2px solid rgba(12,12,12,0.9);
+    overflow:hidden;
+}
+
+.user-profile-button .cl-userButtonTrigger{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:14px;
+}
+
+.user-profile-button .cl-userButtonAvatarBox{
+    width:36px !important;
+    height:36px !important;
+    border-radius:11px !important;
+}
