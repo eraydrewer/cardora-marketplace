@@ -802,60 +802,93 @@ document
         closeModal(listingModal);
     });
 
-document
-    .getElementById("loginButton")
-    .addEventListener("click", async () => {
-        try {
-            await Clerk.load({
-    ui: {
-        ClerkUI: window.__internal_ClerkUICtor
-    },
+const loginButton = document.getElementById("loginButton");
 
-    localization: {
-        locale: "de-DE",
+async function initializeClerk() {
+    try {
+        await Clerk.load({
+            ui: {
+                ClerkUI: window.__internal_ClerkUICtor
+            },
 
-        signIn: {
-            start: {
-                title: "Bei Cardora anmelden",
-                subtitle: "Willkommen zurück! Melde dich an, um fortzufahren.",
-                actionText: "Noch kein Konto?",
-                actionLink: "Jetzt registrieren"
+            localization: {
+                locale: "de-DE",
+
+                signIn: {
+                    start: {
+                        title: "Bei Cardora anmelden",
+                        subtitle: "Willkommen zurück! Melde dich an, um fortzufahren.",
+                        actionText: "Noch kein Konto?",
+                        actionLink: "Jetzt registrieren"
+                    }
+                },
+
+                signUp: {
+                    start: {
+                        title: "Cardora-Konto erstellen",
+                        subtitle: "Registriere dich, um Karten zu kaufen und zu verkaufen.",
+                        actionText: "Du hast bereits ein Konto?",
+                        actionLink: "Anmelden"
+                    }
+                },
+
+                formFieldLabel__emailAddress: "E-Mail-Adresse",
+                formFieldLabel__password: "Passwort",
+                formFieldLabel__firstName: "Vorname",
+                formFieldLabel__lastName: "Nachname",
+                formButtonPrimary: "Weiter",
+                dividerText: "oder",
+                socialButtonsBlockButton: "Mit {{provider|titleize}} fortfahren",
+                formFieldAction__forgotPassword: "Passwort vergessen?"
             }
-        },
+        });
 
-        signUp: {
-            start: {
-                title: "Cardora-Konto erstellen",
-                subtitle: "Registriere dich, um Karten zu kaufen und zu verkaufen.",
-                actionText: "Du hast bereits ein Konto?",
-                actionLink: "Anmelden"
-            }
-        },
+        updateLoginArea();
 
-        formFieldLabel__emailAddress: "E-Mail-Adresse",
-        formFieldLabel__password: "Passwort",
-        formFieldLabel__firstName: "Vorname",
-        formFieldLabel__lastName: "Nachname",
-        formButtonPrimary: "Weiter",
-        dividerText: "oder",
-        socialButtonsBlockButton: "Mit {{provider|titleize}} fortfahren",
-        formFieldAction__forgotPassword: "Passwort vergessen?"
+        Clerk.addListener(() => {
+            updateLoginArea();
+        });
+
+    } catch (error) {
+        console.error("Clerk konnte nicht geladen werden:", error);
+
+        showToast(
+            "Anmeldung nicht verfügbar",
+            "Das Anmeldesystem konnte nicht geladen werden."
+        );
     }
-});
+}
 
+function updateLoginArea() {
+    if (!loginButton) {
+        return;
+    }
+
+    if (Clerk.user) {
+        loginButton.innerHTML = "";
+        loginButton.classList.add("user-profile-button");
+
+        Clerk.mountUserButton(loginButton, {
+            appearance: {
+                elements: {
+                    avatarBox: {
+                        width: "38px",
+                        height: "38px"
+                    }
+                }
+            }
+        });
+    } else {
+        loginButton.classList.remove("user-profile-button");
+        loginButton.innerHTML = "Anmelden";
+
+        loginButton.onclick = () => {
             Clerk.openSignIn();
-        } catch (error) {
-            console.error(
-                "Clerk konnte nicht geöffnet werden:",
-                error
-            );
+        };
+    }
+}
 
-            showToast(
-                "Anmeldung nicht verfügbar",
-                "Das Anmeldefenster konnte nicht geladen werden."
-            );
-        }
-    });
+initializeClerk();
 
 document
     .getElementById("closeLoginModal")
