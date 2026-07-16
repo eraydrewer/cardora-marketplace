@@ -1587,3 +1587,24 @@ img{
     object-fit:cover !important;
     display:block !important;
 }
+
+/* Weißen Hintergrund vom Clerk-Avatar entfernen */
+
+.cl-userButtonAvatarBox,
+.cl-avatarBox,
+.cl-userButtonTrigger,
+.cl-avatarImage {
+    background: transparent !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+}
+
+.cl-userButtonAvatarBox img,
+.cl-avatarImage img {
+    border-radius: 50% !important;
+    object-fit: cover !important;
+}
+
+.cl-userButtonTrigger {
+    box-shadow: none !important;
+}
