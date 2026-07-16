@@ -871,10 +871,11 @@ function updateLoginArea() {
         Clerk.mountUserButton(loginButton, {
             appearance: {
                 elements: {
-                    avatarBox: {
-                        width: "38px",
-                        height: "38px"
-                    }
+                   avatarBox: {
+        width: "36px",
+        height: "36px",
+        borderRadius: "11px"
+        }
                 }
             }
         });
