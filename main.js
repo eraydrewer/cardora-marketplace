@@ -907,7 +907,7 @@ async function syncUserWithBackend() {
         const token = await Clerk.session.getToken();
 
         const response = await fetch(
-            "https://cardora-backend.onrender.com/api/users/sync",
+            "https://cardora-backend-m9d0.onrender.com/api/users/sync",
             {
                 method: "POST",
                 headers: {
