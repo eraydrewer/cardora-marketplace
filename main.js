@@ -868,17 +868,27 @@ function updateLoginArea() {
         loginButton.innerHTML = "";
         loginButton.classList.add("user-profile-button");
 
-        Clerk.mountUserButton(loginButton, {
-            appearance: {
-                elements: {
-    avatarBox: {
-        width: "38px",
-        height: "38px",
-        borderRadius: "50%"
-}
-                }
+Clerk.mountUserButton(loginButton, {
+    appearance: {
+        elements: {
+            userButtonAvatarBox: {
+                borderRadius: "9999px",
+                backgroundColor: "transparent",
+                boxShadow: "none"
+            },
+            avatarBox: {
+                borderRadius: "9999px",
+                backgroundColor: "transparent",
+                boxShadow: "none"
+            },
+            userButtonTrigger: {
+                backgroundColor: "transparent",
+                boxShadow: "none",
+                border: "none"
             }
-        });
+        }
+    }
+});
     } else {
         loginButton.classList.remove("user-profile-button");
         loginButton.innerHTML = "Anmelden";
