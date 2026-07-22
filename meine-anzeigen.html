@@ -83,9 +83,34 @@
             display: block;
         }
 
-        .my-listing-actions {
+       .my-listing-actions {
     display: flex;
+    flex-direction: column;
+    gap: 10px;
     margin-top: 18px;
+}
+
+        .edit-listing-button {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid rgba(244, 196, 94, 0.4);
+    border-radius: 10px;
+    color: #f4c45e;
+    background: rgba(244, 196, 94, 0.08);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.edit-listing-button:hover {
+    background: rgba(244, 196, 94, 0.16);
+    border-color: rgba(244, 196, 94, 0.7);
+}
+
+.edit-listing-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .delete-listing-button {
