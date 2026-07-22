@@ -981,8 +981,18 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
-listingForm.addEventListener("submit", (event) => {
+listingForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    if (!Clerk.user || !Clerk.session) {
+        showToast(
+            "Anmeldung erforderlich",
+            "Du musst angemeldet sein, um eine Anzeige zu veröffentlichen."
+        );
+
+        Clerk.openSignIn();
+        return;
+    }
 
     const title =
         document.getElementById("listingTitle").value.trim();
@@ -1027,61 +1037,85 @@ listingForm.addEventListener("submit", (event) => {
         return;
     }
 
-    const newListing = {
-        id: Date.now(),
-        title,
-        category,
-        condition,
-        price,
-        location,
-        language,
-        shipping,
-        image,
-        description,
-        seller:
-    Clerk.user?.fullName ||
-    Clerk.user?.firstName ||
-    Clerk.user?.username ||
-    "Unbekannter Verkäufer",
-        createdAt: new Date().toISOString()
-    };
+    try {
+        const token = await Clerk.session.getToken();
 
-    listings.unshift(newListing);
-    saveListings();
+        const response = await fetch(
+            "https://cardora-backend-m9d0.onrender.com/api/listings",
+            {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    title,
+                    category,
+                    condition,
+                    price,
+                    location,
+                    language,
+                    shipping,
+                    image,
+                    description
+                })
+            }
+        );
 
-    listingForm.reset();
+        const data = await response.json();
 
-    closeModal(listingModal);
-
-    activeCategory = "Alle";
-    activeSearch = "";
-    visibleListings = 8;
-
-    heroSearchInput.value = "";
-    conditionFilter.value = "Alle";
-    sortFilter.value = "newest";
-
-    document
-        .querySelectorAll(".category-card")
-        .forEach((card) => {
-            card.classList.toggle(
-                "active",
-                card.dataset.category === "Alle"
+        if (!response.ok) {
+            throw new Error(
+                data.message ||
+                "Die Anzeige konnte nicht veröffentlicht werden."
             );
-        });
+        }
 
-    renderListings();
+        listingForm.reset();
+        closeModal(listingModal);
 
-    document
-        .getElementById("marketplace")
-        .scrollIntoView({
-            behavior: "smooth"
-        });
+        activeCategory = "Alle";
+        activeSearch = "";
+        visibleListings = 8;
 
-    showToast(
-        "Anzeige veröffentlicht",
-        "Deine Karte wurde erfolgreich zum Marktplatz hinzugefügt."
-    );
+        heroSearchInput.value = "";
+        conditionFilter.value = "Alle";
+        sortFilter.value = "newest";
+
+        document
+            .querySelectorAll(".category-card")
+            .forEach((card) => {
+                card.classList.toggle(
+                    "active",
+                    card.dataset.category === "Alle"
+                );
+            });
+
+        await loadListingsFromBackend();
+
+        document
+            .getElementById("marketplace")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+        showToast(
+            "Anzeige veröffentlicht",
+            "Deine Karte wurde erfolgreich auf Cardora veröffentlicht."
+        );
+
+    } catch (error) {
+        console.error(
+            "Fehler beim Veröffentlichen der Anzeige:",
+            error
+        );
+
+        showToast(
+            "Veröffentlichung fehlgeschlagen",
+            error.message ||
+            "Die Anzeige konnte momentan nicht gespeichert werden."
+        );
+    }
 });
 
 loginForm.addEventListener("submit", (event) => {
