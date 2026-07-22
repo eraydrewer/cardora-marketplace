@@ -111,6 +111,125 @@
     cursor: not-allowed;
 }
 
+        .delete-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: none;
+    place-items: center;
+
+    padding: 20px;
+
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(8px);
+}
+
+.delete-confirm-overlay.active {
+    display: grid;
+}
+
+.delete-confirm-window {
+    width: 100%;
+    max-width: 430px;
+
+    padding: 34px;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 22px;
+
+    background: #111722;
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.55);
+
+    text-align: center;
+
+    animation: deleteModalAppear 0.2s ease;
+}
+
+.delete-confirm-icon {
+    display: grid;
+    place-items: center;
+
+    width: 58px;
+    height: 58px;
+
+    margin: 0 auto 20px;
+
+    border: 1px solid rgba(255, 80, 80, 0.3);
+    border-radius: 50%;
+
+    background: rgba(255, 80, 80, 0.1);
+
+    font-size: 25px;
+}
+
+.delete-confirm-window h2 {
+    margin: 0 0 12px;
+    color: #ffffff;
+    font-size: 25px;
+}
+
+.delete-confirm-window p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.6;
+}
+
+.delete-confirm-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.delete-confirm-actions button {
+    flex: 1;
+
+    min-height: 46px;
+    padding: 0 16px;
+
+    border-radius: 11px;
+
+    font: inherit;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.delete-confirm-cancel {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.delete-confirm-submit {
+    border: 1px solid rgba(255, 80, 80, 0.5);
+    color: #ffffff;
+    background: #c93f4a;
+}
+
+.delete-confirm-submit:hover {
+    background: #dc4a56;
+}
+
+.delete-confirm-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@keyframes deleteModalAppear {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
         @media (max-width: 760px) {
             .my-listings-main {
                 padding-top: 24px;
@@ -290,7 +409,51 @@
 
         </section>
 
-    </main>
+        </main>
+
+    <!-- Eigene Löschbestätigung -->
+
+    <div
+        class="delete-confirm-overlay"
+        id="deleteConfirmModal"
+    >
+        <div class="delete-confirm-window">
+
+            <div class="delete-confirm-icon">
+                🗑
+            </div>
+
+            <h2>
+                Anzeige löschen?
+            </h2>
+
+            <p>
+                Möchtest du diese Anzeige wirklich dauerhaft löschen?
+                Diese Aktion kann nicht rückgängig gemacht werden.
+            </p>
+
+            <div class="delete-confirm-actions">
+
+                <button
+                    class="delete-confirm-cancel"
+                    id="cancelDeleteButton"
+                    type="button"
+                >
+                    Abbrechen
+                </button>
+
+                <button
+                    class="delete-confirm-submit"
+                    id="confirmDeleteButton"
+                    type="button"
+                >
+                    Anzeige löschen
+                </button>
+
+            </div>
+
+        </div>
+    </div>
 
     <script
         defer
