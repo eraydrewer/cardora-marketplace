@@ -411,6 +411,268 @@
 
         </main>
 
+    <!-- Anzeige bearbeiten -->
+
+<div
+    class="modal-overlay"
+    id="editListingModal"
+>
+    <div class="modal-window">
+
+        <div class="modal-header">
+
+            <div>
+
+                <span class="modal-eyebrow">
+                    ANZEIGE BEARBEITEN
+                </span>
+
+                <h2>
+                    Kartendaten ändern
+                </h2>
+
+            </div>
+
+            <button
+                class="modal-close-button"
+                id="closeEditListingModal"
+                type="button"
+                aria-label="Fenster schließen"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <form id="editListingForm">
+
+            <input
+                type="hidden"
+                id="editListingId"
+            >
+
+            <div class="form-grid">
+
+                <div class="form-group form-group-full">
+
+                    <label for="editListingTitle">
+                        Titel der Anzeige
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editListingTitle"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="editListingCategory">
+                        Kategorie
+                    </label>
+
+                    <select
+                        id="editListingCategory"
+                        required
+                    >
+                        <option value="Pokémon">
+                            Pokémon
+                        </option>
+
+                        <option value="Yu-Gi-Oh!">
+                            Yu-Gi-Oh!
+                        </option>
+
+                        <option value="One Piece">
+                            One Piece
+                        </option>
+
+                        <option value="Magic">
+                            Magic
+                        </option>
+
+                        <option value="Sportkarten">
+                            Sportkarten
+                        </option>
+
+                        <option value="Fußballkarten">
+                            Fußballkarten
+                        </option>
+
+                        <option value="Basketballkarten">
+                            Basketballkarten
+                        </option>
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="editListingCondition">
+                        Zustand
+                    </label>
+
+                    <select
+                        id="editListingCondition"
+                        required
+                    >
+                        <option value="Neu">
+                            Neu
+                        </option>
+
+                        <option value="Near Mint">
+                            Near Mint
+                        </option>
+
+                        <option value="Excellent">
+                            Excellent
+                        </option>
+
+                        <option value="Played">
+                            Played
+                        </option>
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="editListingPrice">
+                        Preis in Euro
+                    </label>
+
+                    <input
+                        type="number"
+                        id="editListingPrice"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="editListingLocation">
+                        Standort
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editListingLocation"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="editListingLanguage">
+                        Sprache
+                    </label>
+
+                    <select id="editListingLanguage">
+
+                        <option value="Deutsch">
+                            Deutsch
+                        </option>
+
+                        <option value="Englisch">
+                            Englisch
+                        </option>
+
+                        <option value="Japanisch">
+                            Japanisch
+                        </option>
+
+                        <option value="Andere">
+                            Andere
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="editListingShipping">
+                        Übergabe
+                    </label>
+
+                    <select id="editListingShipping">
+
+                        <option value="Versand möglich">
+                            Versand möglich
+                        </option>
+
+                        <option value="Nur Abholung">
+                            Nur Abholung
+                        </option>
+
+                        <option value="Versand oder Abholung">
+                            Versand oder Abholung
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group form-group-full">
+
+                    <label for="editListingImage">
+                        Bild-URL
+                    </label>
+
+                    <input
+                        type="url"
+                        id="editListingImage"
+                        placeholder="https://..."
+                    >
+
+                </div>
+
+                <div class="form-group form-group-full">
+
+                    <label for="editListingDescription">
+                        Beschreibung
+                    </label>
+
+                    <textarea
+                        id="editListingDescription"
+                        rows="5"
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+            <div class="modal-actions">
+
+                <button
+                    class="secondary-modal-button"
+                    id="cancelEditListingButton"
+                    type="button"
+                >
+                    Abbrechen
+                </button>
+
+                <button
+                    class="primary-modal-button"
+                    id="saveEditListingButton"
+                    type="submit"
+                >
+                    Änderungen speichern
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
     <!-- Eigene Löschbestätigung -->
 
     <div
