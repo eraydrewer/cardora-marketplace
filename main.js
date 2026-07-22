@@ -705,7 +705,8 @@ function updateLoginArea() {
             label: "Meine Anzeigen",
 
             onClick: () => {
-                loadMyListings();
+    window.location.href = "meine-anzeigen.html";
+},
             },
 
             mountIcon: (element) => {
