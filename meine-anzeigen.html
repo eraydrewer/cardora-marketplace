@@ -646,17 +646,38 @@
 
                 <div class="form-group form-group-full">
 
-                    <label for="editListingImage">
-                        Bild-URL
-                    </label>
+    <label for="editListingImageFile">
+        Bild der Karte
+    </label>
 
-                    <input
-                        type="url"
-                        id="editListingImage"
-                        placeholder="https://..."
-                    >
+    <div class="edit-image-upload">
 
-                </div>
+        <input
+            type="file"
+            id="editListingImageFile"
+            accept="image/jpeg,image/png,image/webp"
+        >
+
+        <p class="edit-image-help">
+            JPG, PNG oder WEBP – maximal 5 MB.
+        </p>
+
+        <img
+            id="editListingImagePreview"
+            class="edit-image-preview"
+            src=""
+            alt="Vorschau des Kartenbildes"
+            hidden
+        >
+
+    </div>
+
+    <input
+        type="hidden"
+        id="editListingImage"
+    >
+
+</div>
 
                 <div class="form-group form-group-full">
 
