@@ -19,6 +19,23 @@ const signInButton =
 const loginButton =
     document.getElementById("loginButton");
 
+const deleteConfirmModal =
+    document.getElementById("deleteConfirmModal");
+
+const cancelDeleteButton =
+    document.getElementById("cancelDeleteButton");
+
+const confirmDeleteButton =
+    document.getElementById("confirmDeleteButton");
+
+const deleteConfirmText =
+    document.querySelector(
+        "#deleteConfirmModal .delete-confirm-window p"
+    );
+
+let pendingDeleteId = null;
+let pendingDeleteButton = null;
+
 let clerkButtonMounted = false;
 
 function escapeHtml(value) {
@@ -142,27 +159,50 @@ function attachDeleteButtons() {
         document.querySelectorAll("[data-delete-id]");
 
     deleteButtons.forEach((button) => {
-        button.addEventListener("click", async () => {
+        button.addEventListener("click", () => {
             const listingId =
                 Number(button.dataset.deleteId);
 
-            await deleteListing(listingId, button);
+            openDeleteConfirmModal(
+                listingId,
+                button
+            );
         });
     });
 }
 
+function openDeleteConfirmModal(listingId, button) {
+    pendingDeleteId = listingId;
+    pendingDeleteButton = button;
+
+    deleteConfirmText.textContent =
+        "Möchtest du diese Anzeige wirklich dauerhaft löschen? Diese Aktion kann nicht rückgängig gemacht werden.";
+
+    confirmDeleteButton.disabled = false;
+    confirmDeleteButton.textContent =
+        "Anzeige löschen";
+
+    deleteConfirmModal.classList.add("active");
+    document.body.style.overflow = "hidden";
+}
+
+function closeDeleteConfirmModal() {
+    deleteConfirmModal.classList.remove("active");
+    document.body.style.overflow = "";
+
+    pendingDeleteId = null;
+    pendingDeleteButton = null;
+
+    confirmDeleteButton.disabled = false;
+    confirmDeleteButton.textContent =
+        "Anzeige löschen";
+}
 async function deleteListing(listingId, button) {
     if (!Clerk.user || !Clerk.session) {
-        alert("Du musst angemeldet sein.");
-        return;
-    }
-
-    const confirmed = window.confirm(
-        "Möchtest du diese Anzeige wirklich dauerhaft löschen?"
-    );
-
-    if (!confirmed) {
-        return;
+        return {
+            success: false,
+            message: "Du musst angemeldet sein."
+        };
     }
 
     try {
@@ -191,9 +231,11 @@ async function deleteListing(listingId, button) {
             );
         }
 
-        alert("Die Anzeige wurde erfolgreich gelöscht.");
-
         await loadMyListings();
+
+        return {
+            success: true
+        };
 
     } catch (error) {
         console.error(
@@ -201,16 +243,17 @@ async function deleteListing(listingId, button) {
             error
         );
 
-        alert(
-            error.message ||
-            "Die Anzeige konnte nicht gelöscht werden."
-        );
-
         button.disabled = false;
         button.textContent = "🗑 Anzeige löschen";
+
+        return {
+            success: false,
+            message:
+                error.message ||
+                "Die Anzeige konnte nicht gelöscht werden."
+        };
     }
 }
-
 function showSignedOutState() {
     listingGrid.innerHTML = "";
     listingGrid.style.display = "none";
@@ -412,6 +455,73 @@ async function initializePage() {
 
 signInButton.addEventListener("click", () => {
     Clerk.openSignIn();
+});
+
+cancelDeleteButton.addEventListener("click", () => {
+    if (confirmDeleteButton.disabled) {
+        return;
+    }
+
+    closeDeleteConfirmModal();
+});
+
+confirmDeleteButton.addEventListener(
+    "click",
+    async () => {
+        if (
+            !pendingDeleteId ||
+            !pendingDeleteButton
+        ) {
+            return;
+        }
+
+        const listingId = pendingDeleteId;
+        const listingButton = pendingDeleteButton;
+
+        confirmDeleteButton.disabled = true;
+        confirmDeleteButton.textContent =
+            "Wird gelöscht …";
+
+        const result = await deleteListing(
+            listingId,
+            listingButton
+        );
+
+        if (result?.success) {
+            closeDeleteConfirmModal();
+            return;
+        }
+
+        deleteConfirmText.textContent =
+            result?.message ||
+            "Die Anzeige konnte nicht gelöscht werden.";
+
+        confirmDeleteButton.disabled = false;
+        confirmDeleteButton.textContent =
+            "Erneut versuchen";
+    }
+);
+
+deleteConfirmModal.addEventListener(
+    "click",
+    (event) => {
+        if (
+            event.target === deleteConfirmModal &&
+            !confirmDeleteButton.disabled
+        ) {
+            closeDeleteConfirmModal();
+        }
+    }
+);
+
+document.addEventListener("keydown", (event) => {
+    if (
+        event.key === "Escape" &&
+        deleteConfirmModal.classList.contains("active") &&
+        !confirmDeleteButton.disabled
+    ) {
+        closeDeleteConfirmModal();
+    }
 });
 
 initializePage();
