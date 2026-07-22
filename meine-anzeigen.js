@@ -19,6 +19,23 @@ const signInButton =
 const loginButton =
     document.getElementById("loginButton");
 
+const editListingModal =
+    document.getElementById("editListingModal");
+
+const editListingForm =
+    document.getElementById("editListingForm");
+
+const closeEditListingModalButton =
+    document.getElementById("closeEditListingModal");
+
+const cancelEditListingButton =
+    document.getElementById("cancelEditListingButton");
+
+const saveEditListingButton =
+    document.getElementById("saveEditListingButton");
+
+let ownListings = [];
+
 const deleteConfirmModal =
     document.getElementById("deleteConfirmModal");
 
@@ -138,20 +155,100 @@ function createListingCard(listing) {
 
                 <div class="my-listing-actions">
 
-                    <button
-                        class="delete-listing-button"
-                        type="button"
-                        data-delete-id="${listing.id}"
-                    >
-                        🗑 Anzeige löschen
-                    </button>
+    <button
+        class="edit-listing-button"
+        type="button"
+        data-edit-id="${listing.id}"
+    >
+        ✎ Anzeige bearbeiten
+    </button>
 
-                </div>
+    <button
+        class="delete-listing-button"
+        type="button"
+        data-delete-id="${listing.id}"
+    >
+        🗑 Anzeige löschen
+    </button>
+
+</div>
 
             </div>
 
         </article>
     `;
+}
+
+function attachEditButtons() {
+    const editButtons =
+        document.querySelectorAll("[data-edit-id]");
+
+    editButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const listingId =
+                Number(button.dataset.editId);
+
+            openEditListingModal(listingId);
+        });
+    });
+}
+
+function openEditListingModal(listingId) {
+    const listing = ownListings.find(
+        (item) => Number(item.id) === listingId
+    );
+
+    if (!listing) {
+        return;
+    }
+
+    document.getElementById("editListingId").value =
+        listing.id;
+
+    document.getElementById("editListingTitle").value =
+        listing.title || "";
+
+    document.getElementById("editListingCategory").value =
+        listing.category || "Pokémon";
+
+    document.getElementById("editListingCondition").value =
+        listing.condition || "Near Mint";
+
+    document.getElementById("editListingPrice").value =
+        listing.price ?? "";
+
+    document.getElementById("editListingLocation").value =
+        listing.location || "";
+
+    document.getElementById("editListingLanguage").value =
+        listing.language || "Deutsch";
+
+    document.getElementById("editListingShipping").value =
+        listing.shipping || "Versand möglich";
+
+    document.getElementById("editListingImage").value =
+        listing.image || "";
+
+    document.getElementById("editListingDescription").value =
+        listing.description || "";
+
+    saveEditListingButton.disabled = false;
+    saveEditListingButton.textContent =
+        "Änderungen speichern";
+
+    editListingModal.classList.add("active");
+    document.body.style.overflow = "hidden";
+}
+
+function closeEditListingModal() {
+    editListingModal.classList.remove("active");
+    document.body.style.overflow = "";
+
+    editListingForm.reset();
+
+    saveEditListingButton.disabled = false;
+    saveEditListingButton.textContent =
+        "Änderungen speichern";
 }
 
 function attachDeleteButtons() {
@@ -264,6 +361,8 @@ function showSignedOutState() {
 }
 
 function renderMyListings(listings) {
+    ownListings = listings;
+
     authState.classList.remove("active");
 
     if (listings.length === 0) {
@@ -279,10 +378,11 @@ function renderMyListings(listings) {
     listingGrid.style.display = "grid";
 
     listingGrid.innerHTML = listings
-        .map(createListingCard)
-        .join("");
-   
-    attachDeleteButtons();
+    .map(createListingCard)
+    .join("");
+
+attachEditButtons();
+attachDeleteButtons();
 
     resultsText.textContent =
         `${listings.length} eigene Anzeige${listings.length === 1 ? "" : "n"}`;
