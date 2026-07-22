@@ -107,7 +107,7 @@ function createListingCard(listing) {
                     ${formatPrice(listing.price)}
                 </div>
 
-                <div class="listing-meta">
+                                <div class="listing-meta">
 
                     <span>
                         📍 ${escapeHtml(listing.location)}
@@ -119,10 +119,96 @@ function createListingCard(listing) {
 
                 </div>
 
+                <div class="my-listing-actions">
+
+                    <button
+                        class="delete-listing-button"
+                        type="button"
+                        data-delete-id="${listing.id}"
+                    >
+                        🗑 Anzeige löschen
+                    </button>
+
+                </div>
+
             </div>
 
         </article>
     `;
+}
+
+function attachDeleteButtons() {
+    const deleteButtons =
+        document.querySelectorAll("[data-delete-id]");
+
+    deleteButtons.forEach((button) => {
+        button.addEventListener("click", async () => {
+            const listingId =
+                Number(button.dataset.deleteId);
+
+            await deleteListing(listingId, button);
+        });
+    });
+}
+
+async function deleteListing(listingId, button) {
+    if (!Clerk.user || !Clerk.session) {
+        alert("Du musst angemeldet sein.");
+        return;
+    }
+
+    const confirmed = window.confirm(
+        "Möchtest du diese Anzeige wirklich dauerhaft löschen?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        button.disabled = true;
+        button.textContent = "Wird gelöscht …";
+
+        const token =
+            await Clerk.session.getToken();
+
+        const response = await fetch(
+            `${BACKEND_URL}/api/listings/${listingId}`,
+            {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message ||
+                "Die Anzeige konnte nicht gelöscht werden."
+            );
+        }
+
+        alert("Die Anzeige wurde erfolgreich gelöscht.");
+
+        await loadMyListings();
+
+    } catch (error) {
+        console.error(
+            "Fehler beim Löschen der Anzeige:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Die Anzeige konnte nicht gelöscht werden."
+        );
+
+        button.disabled = false;
+        button.textContent = "🗑 Anzeige löschen";
+    }
 }
 
 function showSignedOutState() {
@@ -152,6 +238,8 @@ function renderMyListings(listings) {
     listingGrid.innerHTML = listings
         .map(createListingCard)
         .join("");
+   
+    attachDeleteButtons();
 
     resultsText.textContent =
         `${listings.length} eigene Anzeige${listings.length === 1 ? "" : "n"}`;
