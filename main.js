@@ -4,6 +4,7 @@ let favoriteIds = loadFavorites();
 let activeCategory = "Alle";
 let activeSearch = "";
 let visibleListings = 8;
+let showingOwnListings = false;
 
 const listingGrid = document.getElementById("listingGrid");
 const emptyState = document.getElementById("emptyState");
@@ -77,6 +78,95 @@ async function loadListingsFromBackend() {
         showToast(
             "Anzeigen nicht geladen",
             "Die Anzeigen konnten momentan nicht vom Server geladen werden."
+        );
+    }
+}
+
+async function loadMyListings() {
+    if (!Clerk.user || !Clerk.session) {
+        showToast(
+            "Anmeldung erforderlich",
+            "Du musst angemeldet sein, um deine Anzeigen zu sehen."
+        );
+
+        Clerk.openSignIn();
+        return;
+    }
+
+    try {
+        const token = await Clerk.session.getToken();
+
+        const response = await fetch(
+            "https://cardora-backend-m9d0.onrender.com/api/listings/mine",
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message ||
+                "Deine Anzeigen konnten nicht geladen werden."
+            );
+        }
+
+        listings = data.listings.map((listing) => ({
+            id: Number(listing.id),
+            title: listing.title,
+            category: listing.category,
+            condition: listing.condition,
+            price: Number(listing.price),
+            location: listing.location,
+            language: listing.language || "",
+            shipping: listing.shipping || "",
+            image: listing.image || "",
+            description: listing.description || "",
+            seller:
+                [listing.first_name, listing.last_name]
+                    .filter(Boolean)
+                    .join(" ") ||
+                "Du",
+            sellerId: Number(listing.user_id),
+            sellerImage: listing.seller_image || "",
+            createdAt: listing.created_at
+        }));
+
+        showingOwnListings = true;
+        activeCategory = "Alle";
+        activeSearch = "";
+        visibleListings = 8;
+
+        conditionFilter.value = "Alle";
+        sortFilter.value = "newest";
+        heroSearchInput.value = "";
+
+        renderListings();
+
+        document
+            .getElementById("marketplace")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+        showToast(
+            "Meine Anzeigen",
+            `${listings.length} eigene Anzeige${listings.length === 1 ? "" : "n"} geladen.`
+        );
+
+    } catch (error) {
+        console.error(
+            "Fehler beim Laden der eigenen Anzeigen:",
+            error
+        );
+
+        showToast(
+            "Fehler",
+            error.message ||
+            "Deine Anzeigen konnten nicht geladen werden."
         );
     }
 }
@@ -289,16 +379,19 @@ function renderListings() {
 
     const resultCount = filteredListings.length;
 
-    if (activeSearch) {
-        resultsText.textContent =
-            `${resultCount} Ergebnis${resultCount === 1 ? "" : "se"} für „${activeSearch}“`;
-    } else if (activeCategory !== "Alle") {
-        resultsText.textContent =
-            `${resultCount} Angebot${resultCount === 1 ? "" : "e"} in ${activeCategory}`;
-    } else {
-        resultsText.textContent =
-            `${resultCount} aktuelle Angebote auf Cardora`;
-    }
+    if (showingOwnListings) {
+    resultsText.textContent =
+        `${resultCount} eigene Anzeige${resultCount === 1 ? "" : "n"}`;
+} else if (activeSearch) {
+    resultsText.textContent =
+        `${resultCount} Ergebnis${resultCount === 1 ? "" : "se"} für „${activeSearch}“`;
+} else if (activeCategory !== "Alle") {
+    resultsText.textContent =
+        `${resultCount} Angebot${resultCount === 1 ? "" : "e"} in ${activeCategory}`;
+} else {
+    resultsText.textContent =
+        `${resultCount} aktuelle Angebote auf Cardora`;
+}
 
     if (filteredListings.length === 0) {
         listingGrid.style.display = "none";
@@ -604,37 +697,54 @@ function updateLoginArea() {
         if (!clerkButtonMounted) {
             loginButton.innerHTML = "";
 
-            Clerk.mountUserButton(loginButton, {
-                appearance: {
-                    elements: {
-                        rootBox: {
-                            display: "flex",
-                            alignItems: "center"
-                        },
+      Clerk.mountUserButton(loginButton, {
+    customMenuItems: [
+        {
+            label: "Meine Anzeigen",
 
-                        userButtonTrigger: {
-                            padding: "0",
-                            margin: "0",
-                            border: "none",
-                            background: "transparent",
-                            boxShadow: "none"
-                        },
+            onClick: () => {
+                loadMyListings();
+            },
 
-                        userButtonAvatarBox: {
-                            borderRadius: "50%",
-                            border: "none",
-                            boxShadow: "none"
-                        },
+            mountIcon: (element) => {
+                element.innerHTML = "▣";
+            },
 
-                        avatarBox: {
-                            borderRadius: "50%",
-                            border: "none",
-                            boxShadow: "none"
-                        }
-                    }
-                }
-            });
+            unmountIcon: (element) => {
+                element.innerHTML = "";
+            }
+        }
+    ],
 
+    appearance: {
+        elements: {
+            rootBox: {
+                display: "flex",
+                alignItems: "center"
+            },
+
+            userButtonTrigger: {
+                padding: "0",
+                margin: "0",
+                border: "none",
+                background: "transparent",
+                boxShadow: "none"
+            },
+
+            userButtonAvatarBox: {
+                borderRadius: "50%",
+                border: "none",
+                boxShadow: "none"
+            },
+
+            avatarBox: {
+                borderRadius: "50%",
+                border: "none",
+                boxShadow: "none"
+            }
+        }
+    }
+});
             clerkButtonMounted = true;
         }
 
