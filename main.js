@@ -705,8 +705,7 @@ function updateLoginArea() {
             label: "Meine Anzeigen",
 
             onClick: () => {
-    window.location.href = "meine-anzeigen.html";
-},
+                window.location.href = "meine-anzeigen.html";
             },
 
             mountIcon: (element) => {
