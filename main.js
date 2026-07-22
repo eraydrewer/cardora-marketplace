@@ -363,13 +363,13 @@ async function loadListingsFromBackend() {
             createdAt: listing.created_at
         }));
 
-        loadListingsFromBackend();
+        renderListings();
     } catch (error) {
         console.error("Fehler beim Laden der Anzeigen:", error);
 
         listings = [];
 
-        renderListings();
+       renderListings();
 
         showToast(
             "Anzeigen nicht geladen",
@@ -1143,4 +1143,4 @@ document
         });
     });
 
-renderListings();
+loadListingsFromBackend();
