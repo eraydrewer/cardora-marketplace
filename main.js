@@ -32,6 +32,8 @@ const toastTitle = document.getElementById("toastTitle");
 const toastMessage = document.getElementById("toastMessage");
 
 async function loadListingsFromBackend() {
+    showingOwnListings = false;
+
     try {
         const response = await fetch(
             "https://cardora-backend-m9d0.onrender.com/api/listings"
