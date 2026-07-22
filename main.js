@@ -295,7 +295,7 @@ const defaultListings = [
     }
 ];
 
-let listings = loadListings();
+let listings = [];
 let favoriteIds = loadFavorites();
 
 let activeCategory = "Alle";
@@ -327,37 +327,55 @@ const toast = document.getElementById("toast");
 const toastTitle = document.getElementById("toastTitle");
 const toastMessage = document.getElementById("toastMessage");
 
-function loadListings() {
+async function loadListingsFromBackend() {
     try {
-        const storedListings = localStorage.getItem("cardoraListings");
+        const response = await fetch(
+            "https://cardora-backend-m9d0.onrender.com/api/listings"
+        );
 
-        if (!storedListings) {
-            localStorage.setItem(
-                "cardoraListings",
-                JSON.stringify(defaultListings)
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message || "Anzeigen konnten nicht geladen werden."
             );
-
-            return [...defaultListings];
         }
 
-        const parsedListings = JSON.parse(storedListings);
+        listings = data.listings.map((listing) => ({
+            id: Number(listing.id),
+            title: listing.title,
+            category: listing.category,
+            condition: listing.condition,
+            price: Number(listing.price),
+            location: listing.location,
+            language: listing.language || "",
+            shipping: listing.shipping || "",
+            image: listing.image || "",
+            description: listing.description || "",
+            seller:
+                [listing.first_name, listing.last_name]
+                    .filter(Boolean)
+                    .join(" ") ||
+                listing.seller ||
+                "Unbekannter Verkäufer",
+            sellerId: Number(listing.seller_id),
+            sellerImage: listing.seller_image || "",
+            createdAt: listing.created_at
+        }));
 
-        if (!Array.isArray(parsedListings)) {
-            return [...defaultListings];
-        }
-
-        return parsedListings;
+        loadListingsFromBackend();
     } catch (error) {
-        console.error("Anzeigen konnten nicht geladen werden:", error);
-        return [...defaultListings];
-    }
-}
+        console.error("Fehler beim Laden der Anzeigen:", error);
 
-function saveListings() {
-    localStorage.setItem(
-        "cardoraListings",
-        JSON.stringify(listings)
-    );
+        listings = [];
+
+        renderListings();
+
+        showToast(
+            "Anzeigen nicht geladen",
+            "Die Anzeigen konnten momentan nicht vom Server geladen werden."
+        );
+    }
 }
 
 function loadFavorites() {
