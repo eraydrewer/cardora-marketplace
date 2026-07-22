@@ -1020,7 +1020,11 @@ listingForm.addEventListener("submit", (event) => {
         shipping,
         image,
         description,
-        seller: "Neuer Verkäufer",
+        seller:
+    Clerk.user?.fullName ||
+    Clerk.user?.firstName ||
+    Clerk.user?.username ||
+    "Unbekannter Verkäufer",
         createdAt: new Date().toISOString()
     };
 
