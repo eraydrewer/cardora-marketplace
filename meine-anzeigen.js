@@ -31,6 +31,14 @@ const closeEditListingModalButton =
 const cancelEditListingButton =
     document.getElementById("cancelEditListingButton");
 
+const editListingImageFile =
+    document.getElementById("editListingImageFile");
+
+const editListingImagePreview =
+    document.getElementById("editListingImagePreview");
+
+let selectedEditImageFile = null;
+
 const saveEditListingButton =
     document.getElementById("saveEditListingButton");
 
@@ -69,6 +77,40 @@ function formatPrice(price) {
         style: "currency",
         currency: "EUR"
     });
+}
+
+async function uploadListingImage(file, token) {
+    const formData = new FormData();
+
+    formData.append("image", file);
+
+    const response = await fetch(
+        `${BACKEND_URL}/api/uploads/image`,
+        {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            },
+            body: formData
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            data.message ||
+            "Das Bild konnte nicht hochgeladen werden."
+        );
+    }
+
+    if (!data.imageUrl) {
+        throw new Error(
+            "Der Bild-Upload hat keine Bildadresse zurückgegeben."
+        );
+    }
+
+    return data.imageUrl;
 }
 
 function getCategoryIcon(category) {
@@ -226,11 +268,29 @@ function openEditListingModal(listingId) {
     document.getElementById("editListingShipping").value =
         listing.shipping || "Versand möglich";
 
-    document.getElementById("editListingImage").value =
-        listing.image || "";
+    const currentImage =
+    listing.image || "";
 
-    document.getElementById("editListingDescription").value =
-        listing.description || "";
+document.getElementById("editListingImage").value =
+    currentImage;
+
+selectedEditImageFile = null;
+editListingImageFile.value = "";
+
+if (currentImage) {
+    editListingImagePreview.src =
+        currentImage;
+
+    editListingImagePreview.hidden =
+        false;
+} else {
+    editListingImagePreview.src = "";
+    editListingImagePreview.hidden =
+        true;
+}
+
+document.getElementById("editListingDescription").value =
+    listing.description || "";
 
     saveEditListingButton.disabled = false;
     saveEditListingButton.textContent =
@@ -245,6 +305,11 @@ function closeEditListingModal() {
     document.body.style.overflow = "";
 
     editListingForm.reset();
+
+    selectedEditImageFile = null;
+
+    editListingImagePreview.src = "";
+    editListingImagePreview.hidden = true;
 
     saveEditListingButton.disabled = false;
     saveEditListingButton.textContent =
@@ -306,10 +371,10 @@ async function deleteListing(listingId, button) {
         button.disabled = true;
         button.textContent = "Wird gelöscht …";
 
-        const token =
-            await Clerk.session.getToken();
+       const token =
+    await Clerk.session.getToken();
 
-        const response = await fetch(
+const response = await fetch(
             `${BACKEND_URL}/api/listings/${listingId}`,
             {
                 method: "DELETE",
@@ -635,6 +700,67 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
+editListingImageFile.addEventListener(
+    "change",
+    () => {
+        const file =
+            editListingImageFile.files[0];
+
+        if (!file) {
+            selectedEditImageFile = null;
+            return;
+        }
+
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ];
+
+        if (!allowedTypes.includes(file.type)) {
+            editListingImageFile.value = "";
+            selectedEditImageFile = null;
+
+            alert(
+                "Bitte wähle ein JPG-, PNG- oder WEBP-Bild aus."
+            );
+
+            return;
+        }
+
+        const maximumFileSize =
+            5 * 1024 * 1024;
+
+        if (file.size > maximumFileSize) {
+            editListingImageFile.value = "";
+            selectedEditImageFile = null;
+
+            alert(
+                "Das Bild darf maximal 5 MB groß sein."
+            );
+
+            return;
+        }
+
+        selectedEditImageFile = file;
+
+        const reader = new FileReader();
+
+        reader.addEventListener(
+            "load",
+            () => {
+                editListingImagePreview.src =
+                    reader.result;
+
+                editListingImagePreview.hidden =
+                    false;
+            }
+        );
+
+        reader.readAsDataURL(file);
+    }
+);
+
 closeEditListingModalButton.addEventListener(
     "click",
     () => {
@@ -718,11 +844,11 @@ editListingForm.addEventListener(
                 "editListingShipping"
             ).value;
 
-        const image =
-            document
-                .getElementById("editListingImage")
-                .value
-                .trim();
+        let image =
+    document
+        .getElementById("editListingImage")
+        .value
+        .trim();
 
         const description =
             document
@@ -753,10 +879,27 @@ editListingForm.addEventListener(
             saveEditListingButton.textContent =
                 "Wird gespeichert …";
 
-            const token =
-                await Clerk.session.getToken();
+           const token =
+    await Clerk.session.getToken();
 
-            const response = await fetch(
+if (selectedEditImageFile) {
+    saveEditListingButton.textContent =
+        "Bild wird hochgeladen …";
+
+    image = await uploadListingImage(
+        selectedEditImageFile,
+        token
+    );
+
+    document
+        .getElementById("editListingImage")
+        .value = image;
+}
+
+saveEditListingButton.textContent =
+    "Wird gespeichert …";
+
+const response = await fetch(
                 `${BACKEND_URL}/api/listings/${listingId}`,
                 {
                     method: "PUT",
