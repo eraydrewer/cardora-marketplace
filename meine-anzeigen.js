@@ -615,13 +615,193 @@ deleteConfirmModal.addEventListener(
 );
 
 document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") {
+        return;
+    }
+
     if (
-        event.key === "Escape" &&
+        editListingModal.classList.contains("active") &&
+        !saveEditListingButton.disabled
+    ) {
+        closeEditListingModal();
+        return;
+    }
+
+    if (
         deleteConfirmModal.classList.contains("active") &&
         !confirmDeleteButton.disabled
     ) {
         closeDeleteConfirmModal();
     }
 });
+
+closeEditListingModalButton.addEventListener(
+    "click",
+    () => {
+        if (!saveEditListingButton.disabled) {
+            closeEditListingModal();
+        }
+    }
+);
+
+cancelEditListingButton.addEventListener(
+    "click",
+    () => {
+        if (!saveEditListingButton.disabled) {
+            closeEditListingModal();
+        }
+    }
+);
+
+editListingModal.addEventListener(
+    "click",
+    (event) => {
+        if (
+            event.target === editListingModal &&
+            !saveEditListingButton.disabled
+        ) {
+            closeEditListingModal();
+        }
+    }
+);
+
+editListingForm.addEventListener(
+    "submit",
+    async (event) => {
+        event.preventDefault();
+
+        if (!Clerk.user || !Clerk.session) {
+            saveEditListingButton.textContent =
+                "Bitte erneut anmelden";
+            return;
+        }
+
+        const listingId = Number(
+            document.getElementById("editListingId").value
+        );
+
+        const title =
+            document
+                .getElementById("editListingTitle")
+                .value
+                .trim();
+
+        const category =
+            document.getElementById(
+                "editListingCategory"
+            ).value;
+
+        const condition =
+            document.getElementById(
+                "editListingCondition"
+            ).value;
+
+        const price = Number(
+            document.getElementById(
+                "editListingPrice"
+            ).value
+        );
+
+        const location =
+            document
+                .getElementById("editListingLocation")
+                .value
+                .trim();
+
+        const language =
+            document.getElementById(
+                "editListingLanguage"
+            ).value;
+
+        const shipping =
+            document.getElementById(
+                "editListingShipping"
+            ).value;
+
+        const image =
+            document
+                .getElementById("editListingImage")
+                .value
+                .trim();
+
+        const description =
+            document
+                .getElementById(
+                    "editListingDescription"
+                )
+                .value
+                .trim();
+
+        if (
+            !Number.isInteger(listingId) ||
+            listingId <= 0 ||
+            !title ||
+            !category ||
+            !condition ||
+            !location ||
+            !Number.isFinite(price) ||
+            price < 0
+        ) {
+            saveEditListingButton.textContent =
+                "Bitte Angaben prüfen";
+
+            return;
+        }
+
+        try {
+            saveEditListingButton.disabled = true;
+            saveEditListingButton.textContent =
+                "Wird gespeichert …";
+
+            const token =
+                await Clerk.session.getToken();
+
+            const response = await fetch(
+                `${BACKEND_URL}/api/listings/${listingId}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        title,
+                        category,
+                        condition,
+                        price,
+                        location,
+                        language,
+                        shipping,
+                        image,
+                        description
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Die Änderungen konnten nicht gespeichert werden."
+                );
+            }
+
+            closeEditListingModal();
+
+            await loadMyListings();
+
+        } catch (error) {
+            console.error(
+                "Fehler beim Bearbeiten der Anzeige:",
+                error
+            );
+
+            saveEditListingButton.disabled = false;
+            saveEditListingButton.textContent =
+                "Fehler – erneut versuchen";
+        }
+    }
+);
 
 initializePage();
