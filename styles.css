@@ -1254,6 +1254,51 @@ img{
 
 /* RESPONSIVE */
 
+.edit-image-upload {
+    padding: 16px;
+    border: 1px dashed rgba(244, 196, 94, 0.45);
+    border-radius: 12px;
+    background: rgba(244, 196, 94, 0.04);
+}
+
+#editListingImageFile {
+    width: 100%;
+    color: rgba(255, 255, 255, 0.8);
+    font: inherit;
+}
+
+#editListingImageFile::file-selector-button {
+    margin-right: 12px;
+    padding: 10px 14px;
+    border: 1px solid rgba(244, 196, 94, 0.45);
+    border-radius: 9px;
+    color: #111111;
+    background: #f4c45e;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.edit-image-help {
+    margin: 10px 0 0;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 13px;
+}
+
+.edit-image-preview {
+    display: block;
+    width: 100%;
+    max-width: 240px;
+    max-height: 240px;
+    margin-top: 16px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.edit-image-preview[hidden] {
+    display: none;
+}
+
 @media(max-width:1050px){
 
     .desktop-navigation{
