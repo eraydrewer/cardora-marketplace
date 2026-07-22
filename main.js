@@ -1,300 +1,3 @@
-const defaultListings = [
-    {
-        id: 1,
-        title: "Glurak Base Set Holo",
-        category: "Pokémon",
-        condition: "Excellent",
-        price: 549.99,
-        location: "Köln",
-        language: "Deutsch",
-        shipping: "Versand oder Abholung",
-        image: "",
-        description: "Glurak aus dem Base Set. Leichte Gebrauchsspuren vorhanden.",
-        seller: "CardMaster92",
-        createdAt: "2026-07-15T08:30:00"
-    },
-    {
-        id: 2,
-        title: "Pikachu Illustration Rare",
-        category: "Pokémon",
-        condition: "Near Mint",
-        price: 189,
-        location: "Düsseldorf",
-        language: "Englisch",
-        shipping: "Versand möglich",
-        image: "",
-        description: "Direkt aus dem Booster gezogen und sofort geschützt.",
-        seller: "PikaCollector",
-        createdAt: "2026-07-15T07:15:00"
-    },
-    {
-        id: 3,
-        title: "Monkey D. Luffy Alternate Art",
-        category: "One Piece",
-        condition: "Near Mint",
-        price: 134.5,
-        location: "Berlin",
-        language: "Englisch",
-        shipping: "Versand möglich",
-        image: "",
-        description: "Sehr guter Zustand. Karte befindet sich im Toploader.",
-        seller: "GrandLineCards",
-        createdAt: "2026-07-14T21:45:00"
-    },
-    {
-        id: 4,
-        title: "Blue-Eyes White Dragon",
-        category: "Yu-Gi-Oh!",
-        condition: "Excellent",
-        price: 79.99,
-        location: "Hamburg",
-        language: "Deutsch",
-        shipping: "Versand oder Abholung",
-        image: "",
-        description: "Klassischer Blauäugiger weißer Drache.",
-        seller: "DuelKing",
-        createdAt: "2026-07-14T18:20:00"
-    },
-    {
-        id: 5,
-        title: "Black Lotus Sammlerkarte",
-        category: "Magic",
-        condition: "Played",
-        price: 899,
-        location: "München",
-        language: "Englisch",
-        shipping: "Nur Abholung",
-        image: "",
-        description: "Sammlerstück mit sichtbaren Gebrauchsspuren.",
-        seller: "ManaVault",
-        createdAt: "2026-07-14T13:10:00"
-    },
-    {
-        id: 6,
-        title: "Cristiano Ronaldo Topps Chrome",
-        category: "Sportkarten",
-        condition: "Near Mint",
-        price: 64.9,
-        location: "Frankfurt",
-        language: "Englisch",
-        shipping: "Versand möglich",
-        image: "",
-        description: "Topps Chrome Fußballkarte in sehr gutem Zustand.",
-        seller: "SportsCardDE",
-        createdAt: "2026-07-13T20:00:00"
-    },
-    {
-        id: 7,
-        title: "Mewtu VSTAR Gold",
-        category: "Pokémon",
-        condition: "Neu",
-        price: 42,
-        location: "Essen",
-        language: "Deutsch",
-        shipping: "Versand möglich",
-        image: "",
-        description: "Neue Karte ohne sichtbare Schäden.",
-        seller: "RareHunter",
-        createdAt: "2026-07-13T15:35:00"
-    },
-    {
-        id: 8,
-        title: "Roronoa Zoro Manga Rare",
-        category: "One Piece",
-        condition: "Near Mint",
-        price: 379,
-        location: "Dortmund",
-        language: "Englisch",
-        shipping: "Versand oder Abholung",
-        image: "",
-        description: "Seltene Manga-Karte in hervorragendem Zustand.",
-        seller: "PirateCards",
-        createdAt: "2026-07-12T17:10:00"
-    },
-    {
-        id: 9,
-        title: "Dark Magician Girl Secret Rare",
-        category: "Yu-Gi-Oh!",
-        condition: "Near Mint",
-        price: 119.99,
-        location: "Bremen",
-        language: "Deutsch",
-        shipping: "Versand möglich",
-        image: "",
-        description: "Geschützt gelagerte Secret Rare Karte.",
-        seller: "MillenniumShop",
-        createdAt: "2026-07-12T11:45:00"
-    },
-    {
-        id: 10,
-        title: "Umbreon VMAX Alternative Art",
-        category: "Pokémon",
-        condition: "Near Mint",
-        price: 699,
-        location: "Hannover",
-        language: "Englisch",
-        shipping: "Versand möglich",
-        image: "",
-        description: "Sehr seltene Umbreon-Karte. Keine sichtbaren Schäden.",
-        seller: "MoonbreonDE",
-        createdAt: "2026-07-11T22:30:00"
-    },
-    {
-        id: 11,
-        title: "Jace, the Mind Sculptor",
-        category: "Magic",
-        condition: "Excellent",
-        price: 56.5,
-        location: "Leipzig",
-        language: "Englisch",
-        shipping: "Versand möglich",
-        image: "",
-        description: "Guter Zustand mit leichten Gebrauchsspuren.",
-        seller: "Planeswalker",
-        createdAt: "2026-07-11T14:05:00"
-    },
-    {
-        id: 12,
-        title: "Lionel Messi Panini Prizm",
-        category: "Sportkarten",
-        condition: "Neu",
-        price: 89,
-        location: "Stuttgart",
-        language: "Englisch",
-        shipping: "Versand oder Abholung",
-        image: "",
-        description: "Frisch aus dem Pack und sofort geschützt.",
-        seller: "FootballCards",
-        createdAt: "2026-07-10T19:30:00"
-    },
-    {
-        id: 13,
-        title: "Cristiano Ronaldo Topps Chrome",
-        category: "Fußballkarten",
-        condition: "Near Mint",
-        price: 74.99,
-        location: "Köln",
-        language: "Englisch",
-        shipping: "Versand möglich",
-        image: "",
-        description: "Cristiano-Ronaldo-Karte von Topps Chrome in sehr gutem Zustand.",
-        seller: "FootballCollector",
-        createdAt: "2026-07-15T10:30:00"
-    },
-    {
-        id: 14,
-        title: "Lionel Messi Panini Prizm",
-        category: "Fußballkarten",
-        condition: "Neu",
-        price: 89.00,
-        location: "Dortmund",
-        language: "Englisch",
-        shipping: "Versand oder Abholung",
-        image: "",
-        description: "Lionel-Messi-Karte von Panini Prizm, direkt nach dem Öffnen geschützt.",
-        seller: "PaniniCardsDE",
-        createdAt: "2026-07-15T10:15:00"
-    },
-    {
-        id: 15,
-        title: "Jude Bellingham Rookie Card",
-        category: "Fußballkarten",
-        condition: "Near Mint",
-        price: 129.99,
-        location: "Düsseldorf",
-        language: "Englisch",
-        shipping: "Versand möglich",
-        image: "",
-        description: "Jude-Bellingham-Rookie-Karte in hervorragendem Zustand.",
-        seller: "RookieHunter",
-        createdAt: "2026-07-15T09:50:00"
-    },
-    {
-        id: 16,
-        title: "Kylian Mbappé Topps Finest",
-        category: "Fußballkarten",
-        condition: "Excellent",
-        price: 54.50,
-        location: "Berlin",
-        language: "Englisch",
-        shipping: "Versand möglich",
-        image: "",
-        description: "Topps-Finest-Karte von Kylian Mbappé mit leichten Gebrauchsspuren.",
-        seller: "GoalCards",
-        createdAt: "2026-07-15T09:30:00"
-    },
-    {
-        id: 17,
-        title: "Michael Jordan Upper Deck",
-        category: "Basketballkarten",
-        condition: "Excellent",
-        price: 249.99,
-        location: "Hamburg",
-        language: "Englisch",
-        shipping: "Versand oder Abholung",
-        image: "",
-        description: "Michael-Jordan-Sammlerkarte von Upper Deck.",
-        seller: "BasketballVault",
-        createdAt: "2026-07-15T09:00:00"
-    },
-    {
-        id: 18,
-        title: "LeBron James Panini Prizm",
-        category: "Basketballkarten",
-        condition: "Near Mint",
-        price: 179.00,
-        location: "Frankfurt",
-        language: "Englisch",
-        shipping: "Versand möglich",
-        image: "",
-        description: "LeBron-James-Panini-Prizm-Karte im Toploader.",
-        seller: "NBACollector",
-        createdAt: "2026-07-15T08:45:00"
-    },
-    {
-        id: 19,
-        title: "Stephen Curry Select Silver",
-        category: "Basketballkarten",
-        condition: "Near Mint",
-        price: 119.99,
-        location: "München",
-        language: "Englisch",
-        shipping: "Versand möglich",
-        image: "",
-        description: "Stephen-Curry-Select-Silver-Karte in sehr gutem Zustand.",
-        seller: "CourtCards",
-        createdAt: "2026-07-15T08:15:00"
-    },
-    {
-        id: 20,
-        title: "Luka Dončić Rookie Card",
-        category: "Basketballkarten",
-        condition: "Excellent",
-        price: 299.00,
-        location: "Essen",
-        language: "Englisch",
-        shipping: "Versand oder Abholung",
-        image: "",
-        description: "Gesuchte Luka-Dončić-Rookie-Karte mit leichten Gebrauchsspuren.",
-        seller: "RookieBasket",
-        createdAt: "2026-07-15T07:50:00"
-    },
-    {
-        id: 21,
-        title: "Victor Wembanyama Rookie",
-        category: "Basketballkarten",
-        condition: "Neu",
-        price: 159.90,
-        location: "Stuttgart",
-        language: "Englisch",
-        shipping: "Versand möglich",
-        image: "",
-        description: "Victor-Wembanyama-Rookie-Karte, frisch gezogen und geschützt.",
-        seller: "NextGenCards",
-        createdAt: "2026-07-15T07:30:00"
-    }
-];
-
 let listings = [];
 let favoriteIds = loadFavorites();
 
@@ -877,47 +580,88 @@ async function initializeClerk() {
     }
 }
 
+let clerkButtonMounted = false;
+
 function updateLoginArea() {
     if (!loginButton) {
         return;
     }
 
     if (Clerk.user) {
+        syncUserWithBackend();
 
-    syncUserWithBackend();
+        loginButton.onclick = null;
 
-    loginButton.innerHTML = "";
-    loginButton.classList.add("user-profile-button");
+        loginButton.classList.remove(
+            "login-button",
+            "user-profile-button"
+        );
 
-Clerk.mountUserButton(loginButton, {
-    appearance: {
-        elements: {
-            userButtonAvatarBox: {
-                borderRadius: "9999px",
-                backgroundColor: "transparent",
-                boxShadow: "none"
-            },
-            avatarBox: {
-                borderRadius: "9999px",
-                backgroundColor: "transparent",
-                boxShadow: "none"
-            },
-            userButtonTrigger: {
-                backgroundColor: "transparent",
-                boxShadow: "none",
-                border: "none"
-            }
+        loginButton.classList.add(
+            "clerk-profile-container"
+        );
+
+        if (!clerkButtonMounted) {
+            loginButton.innerHTML = "";
+
+            Clerk.mountUserButton(loginButton, {
+                appearance: {
+                    elements: {
+                        rootBox: {
+                            display: "flex",
+                            alignItems: "center"
+                        },
+
+                        userButtonTrigger: {
+                            padding: "0",
+                            margin: "0",
+                            border: "none",
+                            background: "transparent",
+                            boxShadow: "none"
+                        },
+
+                        userButtonAvatarBox: {
+                            borderRadius: "50%",
+                            border: "none",
+                            boxShadow: "none"
+                        },
+
+                        avatarBox: {
+                            borderRadius: "50%",
+                            border: "none",
+                            boxShadow: "none"
+                        }
+                    }
+                }
+            });
+
+            clerkButtonMounted = true;
         }
-    }
-});
-    } else {
-        loginButton.classList.remove("user-profile-button");
-        loginButton.innerHTML = "Anmelden";
 
-        loginButton.onclick = () => {
-            Clerk.openSignIn();
-        };
+        return;
     }
+
+    if (
+        clerkButtonMounted &&
+        typeof Clerk.unmountUserButton === "function"
+    ) {
+        Clerk.unmountUserButton(loginButton);
+    }
+
+    clerkButtonMounted = false;
+
+    loginButton.innerHTML = "Anmelden";
+
+    loginButton.classList.remove(
+        "clerk-profile-container",
+        "user-profile-button"
+    );
+
+    loginButton.classList.add("login-button");
+
+    loginButton.onclick = () => {
+        Clerk.openSignIn();
+    };
 }
 
 async function syncUserWithBackend() {
