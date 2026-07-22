@@ -83,6 +83,34 @@
             display: block;
         }
 
+        .my-listing-actions {
+    display: flex;
+    margin-top: 18px;
+}
+
+.delete-listing-button {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 80, 80, 0.35);
+    border-radius: 10px;
+    color: #ff7676;
+    background: rgba(255, 80, 80, 0.08);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.delete-listing-button:hover {
+    background: rgba(255, 80, 80, 0.16);
+    border-color: rgba(255, 80, 80, 0.65);
+}
+
+.delete-listing-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
         @media (max-width: 760px) {
             .my-listings-main {
                 padding-top: 24px;
