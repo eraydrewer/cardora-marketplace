@@ -25,6 +25,20 @@ const loginModal = document.getElementById("loginModal");
 const listingForm = document.getElementById("listingForm");
 const loginForm = document.getElementById("loginForm");
 
+const listingImageFile =
+    document.getElementById("listingImageFile");
+
+const listingImagePreview =
+    document.getElementById("listingImagePreview");
+
+const listingImageInput =
+    document.getElementById("listingImage");
+
+const publishListingButton =
+    document.getElementById("publishListingButton");
+
+let selectedListingImageFile = null;
+
 const mobileNavigation = document.getElementById("mobileNavigation");
 
 const toast = document.getElementById("toast");
@@ -505,6 +519,53 @@ function closeModal(modal) {
 
 let toastTimer;
 
+async function uploadNewListingImage(file, token) {
+    const formData = new FormData();
+
+    formData.append("image", file);
+
+    const response = await fetch(
+        "https://cardora-backend-m9d0.onrender.com/api/uploads/image",
+        {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            },
+            body: formData
+        }
+    );
+
+    const responseText = await response.text();
+
+    let data = {};
+
+    try {
+        data = responseText
+            ? JSON.parse(responseText)
+            : {};
+    } catch (error) {
+        throw new Error(
+            "Das Backend hat eine ungültige Antwort gesendet."
+        );
+    }
+
+    if (!response.ok) {
+        throw new Error(
+            data.message ||
+            data.error ||
+            "Das Bild konnte nicht hochgeladen werden."
+        );
+    }
+
+    if (!data.imageUrl) {
+        throw new Error(
+            "Der Bild-Upload hat keine Bildadresse zurückgegeben."
+        );
+    }
+
+    return data.imageUrl;
+}
+
 function showToast(title, message) {
     clearTimeout(toastTimer);
 
@@ -837,6 +898,79 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
+listingImageFile.addEventListener(
+    "change",
+    () => {
+        const file =
+            listingImageFile.files[0];
+
+        if (!file) {
+            selectedListingImageFile = null;
+
+            listingImagePreview.src = "";
+            listingImagePreview.hidden = true;
+
+            return;
+        }
+
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ];
+
+        if (!allowedTypes.includes(file.type)) {
+            listingImageFile.value = "";
+            selectedListingImageFile = null;
+
+            listingImagePreview.src = "";
+            listingImagePreview.hidden = true;
+
+            showToast(
+                "Ungültiges Bild",
+                "Bitte wähle ein JPG-, PNG- oder WEBP-Bild aus."
+            );
+
+            return;
+        }
+
+        const maximumFileSize =
+            5 * 1024 * 1024;
+
+        if (file.size > maximumFileSize) {
+            listingImageFile.value = "";
+            selectedListingImageFile = null;
+
+            listingImagePreview.src = "";
+            listingImagePreview.hidden = true;
+
+            showToast(
+                "Bild zu groß",
+                "Das Bild darf maximal 5 MB groß sein."
+            );
+
+            return;
+        }
+
+        selectedListingImageFile = file;
+
+        const reader = new FileReader();
+
+        reader.addEventListener(
+            "load",
+            () => {
+                listingImagePreview.src =
+                    reader.result;
+
+                listingImagePreview.hidden =
+                    false;
+            }
+        );
+
+        reader.readAsDataURL(file);
+    }
+);
+
 listingForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -871,8 +1005,8 @@ listingForm.addEventListener("submit", async (event) => {
     const shipping =
         document.getElementById("listingShipping").value;
 
-    const image =
-        document.getElementById("listingImage").value.trim();
+    let image =
+        listingImageInput.value.trim();
 
     const description =
         document.getElementById("listingDescription").value.trim();
@@ -894,9 +1028,29 @@ listingForm.addEventListener("submit", async (event) => {
     }
 
     try {
-        const token = await Clerk.session.getToken();
+    publishListingButton.disabled = true;
+    publishListingButton.textContent =
+        "Wird vorbereitet …";
 
-        const response = await fetch(
+    const token =
+        await Clerk.session.getToken();
+
+    if (selectedListingImageFile) {
+        publishListingButton.textContent =
+            "Bild wird hochgeladen …";
+
+        image = await uploadNewListingImage(
+            selectedListingImageFile,
+            token
+        );
+
+        listingImageInput.value = image;
+    }
+
+    publishListingButton.textContent =
+        "Anzeige wird veröffentlicht …";
+
+    const response = await fetch(
             "https://cardora-backend-m9d0.onrender.com/api/listings",
             {
                 method: "POST",
@@ -928,7 +1082,20 @@ listingForm.addEventListener("submit", async (event) => {
         }
 
         listingForm.reset();
-        closeModal(listingModal);
+
+selectedListingImageFile = null;
+
+listingImageFile.value = "";
+listingImageInput.value = "";
+
+listingImagePreview.src = "";
+listingImagePreview.hidden = true;
+
+publishListingButton.disabled = false;
+publishListingButton.textContent =
+    "Anzeige veröffentlichen";
+
+closeModal(listingModal);
 
         activeCategory = "Alle";
         activeSearch = "";
@@ -965,6 +1132,10 @@ listingForm.addEventListener("submit", async (event) => {
             "Fehler beim Veröffentlichen der Anzeige:",
             error
         );
+
+        publishListingButton.disabled = false;
+        publishListingButton.textContent =
+            "Erneut versuchen";
 
         showToast(
             "Veröffentlichung fehlgeschlagen",
