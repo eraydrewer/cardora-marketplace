@@ -1197,11 +1197,12 @@
     <div class="listing-image-upload">
 
         <input
-            class="listing-image-file-input"
-            type="file"
-            id="listingImageFile"
-            accept="image/jpeg,image/png,image/webp"
-        >
+    class="listing-image-file-input"
+    type="file"
+    id="listingImageFile"
+    accept="image/jpeg,image/png,image/webp"
+    multiple
+>
 
         <div class="listing-image-select-row">
 
@@ -1217,22 +1218,19 @@
                 class="listing-image-file-name"
                 id="listingImageFileName"
             >
-                Keine Datei ausgewählt
+                Keine Bilder ausgewählt
             </span>
 
         </div>
 
         <p class="listing-image-help">
-            JPG, PNG oder WEBP – maximal 5 MB.
+            Bis zu 8 Bilder. JPG, PNG oder WEBP – maximal 5 MB pro Bild.
         </p>
 
-        <img
-            id="listingImagePreview"
-            class="listing-image-preview"
-            src=""
-            alt="Vorschau des Kartenbildes"
-            hidden
-        >
+        <div
+    class="listing-images-preview-grid"
+    id="listingImagesPreviewGrid"
+></div>
 
     </div>
 
