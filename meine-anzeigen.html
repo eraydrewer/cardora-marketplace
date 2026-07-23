@@ -646,26 +646,46 @@
 
                 <div class="form-group form-group-full">
 
-    <label for="editListingImageFile">
+    <label>
         Bild der Karte
     </label>
 
-    <div class="edit-image-upload">
+    <div class="listing-image-upload">
 
         <input
+            class="listing-image-file-input"
             type="file"
             id="editListingImageFile"
             accept="image/jpeg,image/png,image/webp"
         >
 
-        <p class="edit-image-help">
+        <div class="listing-image-select-row">
+
+            <label
+                class="listing-image-select-button"
+                for="editListingImageFile"
+            >
+                <span>＋</span>
+                Neues Bild auswählen
+            </label>
+
+            <span
+                class="listing-image-file-name"
+                id="editListingImageFileName"
+            >
+                Kein neues Bild ausgewählt
+            </span>
+
+        </div>
+
+        <p class="listing-image-help">
             JPG, PNG oder WEBP – maximal 5 MB.
+            Ohne neue Auswahl bleibt das aktuelle Bild erhalten.
         </p>
 
         <img
             id="editListingImagePreview"
-            class="edit-image-preview"
-            src=""
+            class="listing-image-preview"
             alt="Vorschau des Kartenbildes"
             hidden
         >
