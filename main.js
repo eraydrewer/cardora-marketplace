@@ -926,42 +926,48 @@ listingImageFile.addEventListener(
         ];
 
         if (!allowedTypes.includes(file.type)) {
-            listingImageFile.value = "";
-            selectedListingImageFile = null;
+    listingImageFile.value = "";
+    selectedListingImageFile = null;
 
-            listingImagePreview.src = "";
-            listingImagePreview.hidden = true;
+    listingImageFileName.textContent =
+        "Keine Datei ausgewählt";
 
-            showToast(
-                "Ungültiges Bild",
-                "Bitte wähle ein JPG-, PNG- oder WEBP-Bild aus."
-            );
+    listingImagePreview.removeAttribute("src");
+    listingImagePreview.hidden = true;
 
-            return;
-        }
+    showToast(
+        "Ungültiges Bild",
+        "Bitte wähle ein JPG-, PNG- oder WEBP-Bild aus."
+    );
+
+    return;
+}
 
         const maximumFileSize =
             5 * 1024 * 1024;
 
         if (file.size > maximumFileSize) {
-            listingImageFile.value = "";
-            selectedListingImageFile = null;
+    listingImageFile.value = "";
+    selectedListingImageFile = null;
 
-            listingImagePreview.src = "";
-            listingImagePreview.hidden = true;
+    listingImageFileName.textContent =
+        "Keine Datei ausgewählt";
 
-            showToast(
-                "Bild zu groß",
-                "Das Bild darf maximal 5 MB groß sein."
-            );
+    listingImagePreview.removeAttribute("src");
+    listingImagePreview.hidden = true;
 
-            return;
-        }
+    showToast(
+        "Bild zu groß",
+        "Das Bild darf maximal 5 MB groß sein."
+    );
+
+    return;
+}
 
         selectedListingImageFile = file;
 
-        listingImageFileName.textContent =
-    "Keine Datei ausgewählt";
+listingImageFileName.textContent =
+    file.name;
 
         const reader = new FileReader();
 
@@ -1097,7 +1103,10 @@ selectedListingImageFile = null;
 listingImageFile.value = "";
 listingImageInput.value = "";
 
-listingImagePreview.src = "";
+listingImageFileName.textContent =
+    "Keine Datei ausgewählt";
+
+listingImagePreview.removeAttribute("src");
 listingImagePreview.hidden = true;
 
 publishListingButton.disabled = false;
