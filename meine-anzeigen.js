@@ -34,13 +34,15 @@ const cancelEditListingButton =
 const editListingImageFile =
     document.getElementById("editListingImageFile");
 
-const editListingImagePreview =
-    document.getElementById("editListingImagePreview");
+const editListingImagesPreviewGrid =
+    document.getElementById("editListingImagesPreviewGrid");
 
 const editListingImageFileName =
     document.getElementById("editListingImageFileName");
 
-let selectedEditImageFile = null;
+let editExistingImages = [];
+let selectedEditImageFiles = [];
+let selectedEditPreviewUrls = [];
 
 const saveEditListingButton =
     document.getElementById("saveEditListingButton");
@@ -82,13 +84,19 @@ function formatPrice(price) {
     });
 }
 
-async function uploadListingImage(file, token) {
+async function uploadListingImages(files, token) {
+    if (!Array.isArray(files) || files.length === 0) {
+        return [];
+    }
+
     const formData = new FormData();
 
-    formData.append("image", file);
+    files.forEach((file) => {
+        formData.append("images", file);
+    });
 
     const response = await fetch(
-        `${BACKEND_URL}/api/uploads/image`,
+        `${BACKEND_URL}/api/uploads/images`,
         {
             method: "POST",
             headers: {
@@ -100,9 +108,6 @@ async function uploadListingImage(file, token) {
 
     const responseText = await response.text();
 
-    console.log("Upload-Status:", response.status);
-    console.log("Upload-Antwort:", responseText);
-
     let data = {};
 
     try {
@@ -111,7 +116,7 @@ async function uploadListingImage(file, token) {
             : {};
     } catch (error) {
         throw new Error(
-            `Ungültige Antwort vom Backend. Status: ${response.status}. Antwort: ${responseText}`
+            "Das Backend hat eine ungültige Antwort gesendet."
         );
     }
 
@@ -119,17 +124,389 @@ async function uploadListingImage(file, token) {
         throw new Error(
             data.message ||
             data.error ||
-            `Bild-Upload fehlgeschlagen. HTTP-Status: ${response.status}`
+            "Die Bilder konnten nicht hochgeladen werden."
         );
     }
 
-    if (!data.imageUrl) {
+    if (!Array.isArray(data.images)) {
         throw new Error(
-            "Der Upload war erfolgreich, aber das Backend hat keine imageUrl zurückgegeben."
+            "Der Upload hat keine gültige Bilderliste zurückgegeben."
         );
     }
 
-    return data.imageUrl;
+    return data.images.map((imageItem, index) => {
+        if (!imageItem?.imageUrl) {
+            throw new Error(
+                "Mindestens ein hochgeladenes Bild hat keine Bildadresse."
+            );
+        }
+
+        return {
+            id: null,
+            imageUrl: imageItem.imageUrl,
+            publicId: imageItem.publicId || null,
+            sortOrder: index
+        };
+    });
+}
+
+function normalizeListingImages(listing) {
+    const rawImages =
+        Array.isArray(listing?.images)
+            ? listing.images
+            : [];
+
+    const normalizedImages = [];
+    const usedUrls = new Set();
+
+    rawImages.forEach((imageItem, index) => {
+        const imageUrl =
+            typeof imageItem?.imageUrl === "string"
+                ? imageItem.imageUrl.trim()
+                : typeof imageItem?.image_url === "string"
+                    ? imageItem.image_url.trim()
+                    : "";
+
+        if (!imageUrl || usedUrls.has(imageUrl)) {
+            return;
+        }
+
+        usedUrls.add(imageUrl);
+
+        const numericId = Number(imageItem.id);
+
+        normalizedImages.push({
+            id:
+                Number.isInteger(numericId) &&
+                numericId > 0
+                    ? numericId
+                    : null,
+            imageUrl,
+            publicId:
+                imageItem.publicId ||
+                imageItem.public_id ||
+                null,
+            sortOrder:
+                Number.isInteger(
+                    Number(
+                        imageItem.sortOrder ??
+                        imageItem.sort_order
+                    )
+                )
+                    ? Number(
+                        imageItem.sortOrder ??
+                        imageItem.sort_order
+                    )
+                    : index
+        });
+    });
+
+    normalizedImages.sort(
+        (firstImage, secondImage) =>
+            firstImage.sortOrder -
+            secondImage.sortOrder
+    );
+
+    if (
+        normalizedImages.length === 0 &&
+        typeof listing?.image === "string" &&
+        listing.image.trim()
+    ) {
+        normalizedImages.push({
+            id: null,
+            imageUrl: listing.image.trim(),
+            publicId: null,
+            sortOrder: 0
+        });
+    }
+
+    return normalizedImages.map(
+        (imageItem, index) => ({
+            ...imageItem,
+            sortOrder: index
+        })
+    );
+}
+
+function releaseEditPreviewUrls() {
+    selectedEditPreviewUrls.forEach((previewUrl) => {
+        URL.revokeObjectURL(previewUrl);
+    });
+
+    selectedEditPreviewUrls = [];
+}
+
+function updateEditImageCount() {
+    const totalImages =
+        editExistingImages.length +
+        selectedEditImageFiles.length;
+
+    editListingImageFileName.textContent =
+        `${totalImages} von 8 Bildern`;
+}
+
+function createEditPreviewItem({
+    imageUrl,
+    index,
+    onRemove,
+    removeLabel
+}) {
+    const previewItem =
+        document.createElement("div");
+
+    previewItem.className =
+        "listing-image-preview-item";
+
+    const previewImage =
+        document.createElement("img");
+
+    previewImage.src = imageUrl;
+    previewImage.alt =
+        `Vorschau Bild ${index + 1}`;
+
+    const removeButton =
+        document.createElement("button");
+
+    removeButton.className =
+        "listing-image-remove-button";
+
+    removeButton.type = "button";
+    removeButton.textContent = "×";
+
+    removeButton.setAttribute(
+        "aria-label",
+        removeLabel
+    );
+
+    removeButton.addEventListener(
+        "click",
+        onRemove
+    );
+
+    previewItem.appendChild(previewImage);
+    previewItem.appendChild(removeButton);
+
+    if (index === 0) {
+        const primaryBadge =
+            document.createElement("span");
+
+        primaryBadge.className =
+            "listing-image-primary-badge";
+
+        primaryBadge.textContent =
+            "Titelbild";
+
+        previewItem.appendChild(primaryBadge);
+    }
+
+    editListingImagesPreviewGrid.appendChild(
+        previewItem
+    );
+}
+
+function renderEditListingImages() {
+    releaseEditPreviewUrls();
+
+    editListingImagesPreviewGrid.innerHTML = "";
+
+    editExistingImages.forEach(
+        (imageItem, index) => {
+            createEditPreviewItem({
+                imageUrl: imageItem.imageUrl,
+                index,
+                removeLabel:
+                    `Vorhandenes Bild ${index + 1} löschen`,
+                onRemove: async (event) => {
+                    const removeButton =
+                        event.currentTarget;
+
+                    if (imageItem.id) {
+                        await deleteExistingListingImage(
+                            imageItem.id,
+                            removeButton
+                        );
+
+                        return;
+                    }
+
+                    editExistingImages.splice(index, 1);
+
+                    editExistingImages =
+                        editExistingImages.map(
+                            (item, itemIndex) => ({
+                                ...item,
+                                sortOrder: itemIndex
+                            })
+                        );
+
+                    renderEditListingImages();
+                }
+            });
+        }
+    );
+
+    selectedEditImageFiles.forEach(
+        (file, fileIndex) => {
+            const previewUrl =
+                URL.createObjectURL(file);
+
+            selectedEditPreviewUrls.push(
+                previewUrl
+            );
+
+            const combinedIndex =
+                editExistingImages.length +
+                fileIndex;
+
+            createEditPreviewItem({
+                imageUrl: previewUrl,
+                index: combinedIndex,
+                removeLabel:
+                    `Neues Bild ${fileIndex + 1} entfernen`,
+                onRemove: () => {
+                    selectedEditImageFiles.splice(
+                        fileIndex,
+                        1
+                    );
+
+                    editListingImageFile.value = "";
+
+                    renderEditListingImages();
+                }
+            });
+        }
+    );
+
+    const currentPrimaryImage =
+        editExistingImages[0]?.imageUrl ||
+        "";
+
+    document
+        .getElementById("editListingImage")
+        .value = currentPrimaryImage;
+
+    updateEditImageCount();
+}
+
+function resetEditListingImages() {
+    releaseEditPreviewUrls();
+
+    editExistingImages = [];
+    selectedEditImageFiles = [];
+
+    editListingImageFile.value = "";
+    editListingImagesPreviewGrid.innerHTML = "";
+
+    document
+        .getElementById("editListingImage")
+        .value = "";
+
+    updateEditImageCount();
+}
+
+async function deleteExistingListingImage(
+    imageId,
+    button
+) {
+    if (!Clerk.user || !Clerk.session) {
+        alert(
+            "Du musst angemeldet sein, um ein Bild zu löschen."
+        );
+
+        return;
+    }
+
+    const listingId = Number(
+        document
+            .getElementById("editListingId")
+            .value
+    );
+
+    if (
+        !Number.isInteger(listingId) ||
+        listingId <= 0
+    ) {
+        alert("Ungültige Anzeigen-ID.");
+        return;
+    }
+
+    const confirmed = window.confirm(
+        "Möchtest du dieses Bild wirklich löschen?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    const oldButtonText = button.textContent;
+
+    try {
+        button.disabled = true;
+        button.textContent = "…";
+
+        const token =
+            await Clerk.session.getToken();
+
+        const response = await fetch(
+            `${BACKEND_URL}/api/listings/${listingId}/images/${imageId}`,
+            {
+                method: "DELETE",
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message ||
+                "Das Bild konnte nicht gelöscht werden."
+            );
+        }
+
+        editExistingImages =
+            normalizeListingImages({
+                images: data.images || [],
+                image: data.primaryImage || ""
+            });
+
+        const matchingListing =
+            ownListings.find(
+                (listing) =>
+                    Number(listing.id) ===
+                    listingId
+            );
+
+        if (matchingListing) {
+            matchingListing.images =
+                editExistingImages;
+
+            matchingListing.image =
+                data.primaryImage ||
+                editExistingImages[0]
+                    ?.imageUrl ||
+                "";
+        }
+
+        renderEditListingImages();
+
+    } catch (error) {
+        console.error(
+            "Fehler beim Löschen des Bildes:",
+            error
+        );
+
+        button.disabled = false;
+        button.textContent = oldButtonText;
+
+        alert(
+            error.message ||
+            "Das Bild konnte nicht gelöscht werden."
+        );
+    }
 }
 
 function getCategoryIcon(category) {
@@ -287,32 +664,16 @@ function openEditListingModal(listingId) {
     document.getElementById("editListingShipping").value =
         listing.shipping || "Versand möglich";
 
-    const currentImage =
-    listing.image || "";
+    editExistingImages =
+        normalizeListingImages(listing);
 
-document.getElementById("editListingImage").value =
-    currentImage;
+    selectedEditImageFiles = [];
+    editListingImageFile.value = "";
 
-selectedEditImageFile = null;
-editListingImageFile.value = "";
+    renderEditListingImages();
 
-    editListingImageFileName.textContent =
-    "Kein neues Bild ausgewählt";
-
-if (currentImage) {
-    editListingImagePreview.src =
-        currentImage;
-
-    editListingImagePreview.hidden =
-        false;
-} else {
-    editListingImagePreview.src = "";
-    editListingImagePreview.hidden =
-        true;
-}
-
-document.getElementById("editListingDescription").value =
-    listing.description || "";
+    document.getElementById("editListingDescription").value =
+        listing.description || "";
 
     saveEditListingButton.disabled = false;
     saveEditListingButton.textContent =
@@ -328,14 +689,7 @@ function closeEditListingModal() {
 
     editListingForm.reset();
 
-    selectedEditImageFile = null;
-    editListingImageFile.value = "";
-
-    editListingImageFileName.textContent =
-        "Kein neues Bild ausgewählt";
-
-    editListingImagePreview.removeAttribute("src");
-    editListingImagePreview.hidden = true;
+    resetEditListingImages();
 
     saveEditListingButton.disabled = false;
     saveEditListingButton.textContent =
@@ -729,17 +1083,16 @@ document.addEventListener("keydown", (event) => {
 editListingImageFile.addEventListener(
     "change",
     () => {
-        const file =
-            editListingImageFile.files[0];
+        const incomingFiles =
+            Array.from(
+                editListingImageFile.files || []
+            );
 
-        if (!file) {
-    selectedEditImageFile = null;
+        editListingImageFile.value = "";
 
-    editListingImageFileName.textContent =
-        "Kein neues Bild ausgewählt";
-
-    return;
-}
+        if (incomingFiles.length === 0) {
+            return;
+        }
 
         const allowedTypes = [
             "image/jpeg",
@@ -747,54 +1100,86 @@ editListingImageFile.addEventListener(
             "image/webp"
         ];
 
-        if (!allowedTypes.includes(file.type)) {
-            editListingImageFile.value = "";
-            selectedEditImageFile = null;
-            editListingImageFileName.textContent =
-    "Kein neues Bild ausgewählt";
-
-            alert(
-                "Bitte wähle ein JPG-, PNG- oder WEBP-Bild aus."
-            );
-
-            return;
-        }
-
         const maximumFileSize =
             5 * 1024 * 1024;
 
-        if (file.size > maximumFileSize) {
-            editListingImageFile.value = "";
-            selectedEditImageFile = null;
-            editListingImageFileName.textContent =
-    "Kein neues Bild ausgewählt";
+        let invalidTypeCount = 0;
+        let tooLargeCount = 0;
+        let duplicateCount = 0;
+        let overflowCount = 0;
 
-            alert(
-                "Das Bild darf maximal 5 MB groß sein."
+        incomingFiles.forEach((file) => {
+            if (!allowedTypes.includes(file.type)) {
+                invalidTypeCount += 1;
+                return;
+            }
+
+            if (file.size > maximumFileSize) {
+                tooLargeCount += 1;
+                return;
+            }
+
+            const alreadySelected =
+                selectedEditImageFiles.some(
+                    (selectedFile) =>
+                        selectedFile.name ===
+                            file.name &&
+                        selectedFile.size ===
+                            file.size &&
+                        selectedFile.lastModified ===
+                            file.lastModified
+                );
+
+            if (alreadySelected) {
+                duplicateCount += 1;
+                return;
+            }
+
+            const currentTotal =
+                editExistingImages.length +
+                selectedEditImageFiles.length;
+
+            if (currentTotal >= 8) {
+                overflowCount += 1;
+                return;
+            }
+
+            selectedEditImageFiles.push(file);
+        });
+
+        renderEditListingImages();
+
+        const rejectedReasons = [];
+
+        if (invalidTypeCount > 0) {
+            rejectedReasons.push(
+                `${invalidTypeCount} Datei${invalidTypeCount === 1 ? "" : "en"} hatte${invalidTypeCount === 1 ? "" : "n"} ein ungültiges Format`
             );
-
-            return;
         }
 
-        selectedEditImageFile = file;
+        if (tooLargeCount > 0) {
+            rejectedReasons.push(
+                `${tooLargeCount} Bild${tooLargeCount === 1 ? "" : "er"} war${tooLargeCount === 1 ? "" : "en"} größer als 5 MB`
+            );
+        }
 
-        editListingImageFileName.textContent =
-    file.name;
+        if (duplicateCount > 0) {
+            rejectedReasons.push(
+                `${duplicateCount} Bild${duplicateCount === 1 ? "" : "er"} war${duplicateCount === 1 ? "" : "en"} bereits ausgewählt`
+            );
+        }
 
-        const reader = new FileReader();
+        if (overflowCount > 0) {
+            rejectedReasons.push(
+                "maximal 8 Bilder sind erlaubt"
+            );
+        }
 
-        reader.addEventListener(
-            "load",
-            () => {
-                editListingImagePreview.src =
-                    reader.result;
-
-                editListingImagePreview.hidden =
-                    false;
-            }
-        );
-
-        reader.readAsDataURL(file);
+        if (rejectedReasons.length > 0) {
+            alert(
+                `Einige Bilder wurden nicht übernommen: ${rejectedReasons.join(", ")}.`
+            );
+        }
     }
 );
 
@@ -881,11 +1266,19 @@ editListingForm.addEventListener(
                 "editListingShipping"
             ).value;
 
+        let images =
+            editExistingImages.map(
+                (imageItem, index) => ({
+                    id: imageItem.id || null,
+                    imageUrl: imageItem.imageUrl,
+                    publicId:
+                        imageItem.publicId || null,
+                    sortOrder: index
+                })
+            );
+
         let image =
-    document
-        .getElementById("editListingImage")
-        .value
-        .trim();
+            images[0]?.imageUrl || "";
 
         const description =
             document
@@ -919,19 +1312,34 @@ editListingForm.addEventListener(
            const token =
     await Clerk.session.getToken();
 
-if (selectedEditImageFile) {
+if (selectedEditImageFiles.length > 0) {
     saveEditListingButton.textContent =
-        "Bild wird hochgeladen …";
+        `${selectedEditImageFiles.length} Bild${selectedEditImageFiles.length === 1 ? "" : "er"} werden hochgeladen …`;
 
-    image = await uploadListingImage(
-        selectedEditImageFile,
-        token
-    );
+    const uploadedImages =
+        await uploadListingImages(
+            selectedEditImageFiles,
+            token
+        );
 
-    document
-        .getElementById("editListingImage")
-        .value = image;
+    images = [
+        ...images,
+        ...uploadedImages
+    ].map((imageItem, index) => ({
+        id: imageItem.id || null,
+        imageUrl: imageItem.imageUrl,
+        publicId:
+            imageItem.publicId || null,
+        sortOrder: index
+    }));
 }
+
+image =
+    images[0]?.imageUrl || "";
+
+document
+    .getElementById("editListingImage")
+    .value = image;
 
 saveEditListingButton.textContent =
     "Wird gespeichert …";
@@ -953,6 +1361,7 @@ const response = await fetch(
                         language,
                         shipping,
                         image,
+                        images,
                         description
                     })
                 }
