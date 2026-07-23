@@ -1190,17 +1190,37 @@
 
                     <div class="form-group form-group-full">
 
-    <label for="listingImageFile">
+    <label>
         Bild der Karte
     </label>
 
     <div class="listing-image-upload">
 
         <input
+            class="listing-image-file-input"
             type="file"
             id="listingImageFile"
             accept="image/jpeg,image/png,image/webp"
         >
+
+        <div class="listing-image-select-row">
+
+            <label
+                class="listing-image-select-button"
+                for="listingImageFile"
+            >
+                <span>＋</span>
+                Bild auswählen
+            </label>
+
+            <span
+                class="listing-image-file-name"
+                id="listingImageFileName"
+            >
+                Keine Datei ausgewählt
+            </span>
+
+        </div>
 
         <p class="listing-image-help">
             JPG, PNG oder WEBP – maximal 5 MB.
@@ -1215,6 +1235,14 @@
         >
 
     </div>
+
+    <input
+        type="hidden"
+        id="listingImage"
+        value=""
+    >
+
+</div>
 
     <input
         type="hidden"
