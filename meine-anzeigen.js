@@ -37,6 +37,9 @@ const editListingImageFile =
 const editListingImagePreview =
     document.getElementById("editListingImagePreview");
 
+const editListingImageFileName =
+    document.getElementById("editListingImageFileName");
+
 let selectedEditImageFile = null;
 
 const saveEditListingButton =
@@ -293,6 +296,9 @@ document.getElementById("editListingImage").value =
 selectedEditImageFile = null;
 editListingImageFile.value = "";
 
+    editListingImageFileName.textContent =
+    "Kein neues Bild ausgewählt";
+
 if (currentImage) {
     editListingImagePreview.src =
         currentImage;
@@ -323,8 +329,12 @@ function closeEditListingModal() {
     editListingForm.reset();
 
     selectedEditImageFile = null;
+    editListingImageFile.value = "";
 
-    editListingImagePreview.src = "";
+    editListingImageFileName.textContent =
+        "Kein neues Bild ausgewählt";
+
+    editListingImagePreview.removeAttribute("src");
     editListingImagePreview.hidden = true;
 
     saveEditListingButton.disabled = false;
@@ -736,6 +746,8 @@ editListingImageFile.addEventListener(
         if (!allowedTypes.includes(file.type)) {
             editListingImageFile.value = "";
             selectedEditImageFile = null;
+            editListingImageFileName.textContent =
+    "Kein neues Bild ausgewählt";
 
             alert(
                 "Bitte wähle ein JPG-, PNG- oder WEBP-Bild aus."
@@ -750,6 +762,8 @@ editListingImageFile.addEventListener(
         if (file.size > maximumFileSize) {
             editListingImageFile.value = "";
             selectedEditImageFile = null;
+            editListingImageFileName.textContent =
+    "Kein neues Bild ausgewählt";
 
             alert(
                 "Das Bild darf maximal 5 MB groß sein."
@@ -759,6 +773,9 @@ editListingImageFile.addEventListener(
         }
 
         selectedEditImageFile = file;
+
+        editListingImageFileName.textContent =
+    file.name;
 
         const reader = new FileReader();
 
