@@ -733,9 +733,13 @@ editListingImageFile.addEventListener(
             editListingImageFile.files[0];
 
         if (!file) {
-            selectedEditImageFile = null;
-            return;
-        }
+    selectedEditImageFile = null;
+
+    editListingImageFileName.textContent =
+        "Kein neues Bild ausgewählt";
+
+    return;
+}
 
         const allowedTypes = [
             "image/jpeg",
