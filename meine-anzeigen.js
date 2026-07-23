@@ -956,14 +956,9 @@ const response = await fetch(
         error
     );
 
-    alert(
-        "Fehler beim Speichern:\n\n" +
-        (error.message || "Unbekannter Fehler")
-    );
-
     saveEditListingButton.disabled = false;
     saveEditListingButton.textContent =
-        "Erneut versuchen";
+        "Fehler – erneut versuchen";
 }
     }
 );
