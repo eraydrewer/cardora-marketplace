@@ -89,24 +89,40 @@ async function uploadListingImage(file, token) {
         {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${token}`
+                Authorization: `Bearer ${token}`
             },
             body: formData
         }
     );
 
-    const data = await response.json();
+    const responseText = await response.text();
+
+    console.log("Upload-Status:", response.status);
+    console.log("Upload-Antwort:", responseText);
+
+    let data = {};
+
+    try {
+        data = responseText
+            ? JSON.parse(responseText)
+            : {};
+    } catch (error) {
+        throw new Error(
+            `Ungültige Antwort vom Backend. Status: ${response.status}. Antwort: ${responseText}`
+        );
+    }
 
     if (!response.ok) {
         throw new Error(
             data.message ||
-            "Das Bild konnte nicht hochgeladen werden."
+            data.error ||
+            `Bild-Upload fehlgeschlagen. HTTP-Status: ${response.status}`
         );
     }
 
     if (!data.imageUrl) {
         throw new Error(
-            "Der Bild-Upload hat keine Bildadresse zurückgegeben."
+            "Der Upload war erfolgreich, aber das Backend hat keine imageUrl zurückgegeben."
         );
     }
 
@@ -935,15 +951,20 @@ const response = await fetch(
             await loadMyListings();
 
         } catch (error) {
-            console.error(
-                "Fehler beim Bearbeiten der Anzeige:",
-                error
-            );
+    console.error(
+        "Fehler beim Bearbeiten der Anzeige:",
+        error
+    );
 
-            saveEditListingButton.disabled = false;
-            saveEditListingButton.textContent =
-                "Fehler – erneut versuchen";
-        }
+    alert(
+        "Fehler beim Speichern:\n\n" +
+        (error.message || "Unbekannter Fehler")
+    );
+
+    saveEditListingButton.disabled = false;
+    saveEditListingButton.textContent =
+        "Erneut versuchen";
+}
     }
 );
 
