@@ -1190,22 +1190,39 @@
 
                     <div class="form-group form-group-full">
 
-                        <label for="listingImage">
-                            Bild-URL
-                        </label>
+    <label for="listingImageFile">
+        Bild der Karte
+    </label>
 
-                        <input
-                            type="url"
-                            id="listingImage"
-                            placeholder="https://..."
-                        >
+    <div class="listing-image-upload">
 
-                        <small>
-                            Für die erste Demo verwenden wir eine Bildadresse.
-                            Ein echter Upload kommt später.
-                        </small>
+        <input
+            type="file"
+            id="listingImageFile"
+            accept="image/jpeg,image/png,image/webp"
+        >
 
-                    </div>
+        <p class="listing-image-help">
+            JPG, PNG oder WEBP – maximal 5 MB.
+        </p>
+
+        <img
+            id="listingImagePreview"
+            class="listing-image-preview"
+            src=""
+            alt="Vorschau des Kartenbildes"
+            hidden
+        >
+
+    </div>
+
+    <input
+        type="hidden"
+        id="listingImage"
+        value=""
+    >
+
+</div>
 
                     <div class="form-group form-group-full">
 
@@ -1233,8 +1250,9 @@
                         Abbrechen
                     </button>
 
-                    <button
+                   <button
                         class="primary-modal-button"
+                        id="publishListingButton"
                         type="submit"
                     >
                         Anzeige veröffentlichen
