@@ -28,8 +28,8 @@ const loginForm = document.getElementById("loginForm");
 const listingImageFile =
     document.getElementById("listingImageFile");
 
-const listingImagePreview =
-    document.getElementById("listingImagePreview");
+const listingImagesPreviewGrid =
+    document.getElementById("listingImagesPreviewGrid");
 
 const listingImageFileName =
     document.getElementById("listingImageFileName");
@@ -40,7 +40,8 @@ const listingImageInput =
 const publishListingButton =
     document.getElementById("publishListingButton");
 
-let selectedListingImageFile = null;
+let selectedListingImageFiles = [];
+let selectedListingPreviewUrls = [];
 
 const mobileNavigation = document.getElementById("mobileNavigation");
 
@@ -74,6 +75,9 @@ async function loadListingsFromBackend() {
             language: listing.language || "",
             shipping: listing.shipping || "",
             image: listing.image || "",
+            images: Array.isArray(listing.images)
+                ? listing.images
+                : [],
             description: listing.description || "",
             seller:
                 [listing.first_name, listing.last_name]
@@ -143,6 +147,9 @@ async function loadMyListings() {
             language: listing.language || "",
             shipping: listing.shipping || "",
             image: listing.image || "",
+            images: Array.isArray(listing.images)
+                ? listing.images
+                : [],
             description: listing.description || "",
             seller:
                 [listing.first_name, listing.last_name]
@@ -522,13 +529,95 @@ function closeModal(modal) {
 
 let toastTimer;
 
-async function uploadNewListingImage(file, token) {
+function releaseSelectedListingPreviewUrls() {
+    selectedListingPreviewUrls.forEach((previewUrl) => {
+        URL.revokeObjectURL(previewUrl);
+    });
+
+    selectedListingPreviewUrls = [];
+}
+
+function updateSelectedListingFileName() {
+    const imageCount = selectedListingImageFiles.length;
+
+    listingImageFileName.textContent =
+        imageCount === 0
+            ? "Keine Bilder ausgewählt"
+            : `${imageCount} Bild${imageCount === 1 ? "" : "er"} ausgewählt`;
+}
+
+function renderSelectedListingImages() {
+    releaseSelectedListingPreviewUrls();
+
+    listingImagesPreviewGrid.innerHTML = "";
+    updateSelectedListingFileName();
+
+    selectedListingImageFiles.forEach((file, index) => {
+        const previewUrl = URL.createObjectURL(file);
+
+        selectedListingPreviewUrls.push(previewUrl);
+
+        const previewItem = document.createElement("div");
+        previewItem.className = "listing-image-preview-item";
+
+        const previewImage = document.createElement("img");
+        previewImage.src = previewUrl;
+        previewImage.alt = `Vorschau Bild ${index + 1}`;
+
+        const removeButton = document.createElement("button");
+        removeButton.className = "listing-image-remove-button";
+        removeButton.type = "button";
+        removeButton.textContent = "×";
+        removeButton.setAttribute(
+            "aria-label",
+            `Bild ${index + 1} entfernen`
+        );
+
+        removeButton.addEventListener("click", () => {
+            selectedListingImageFiles.splice(index, 1);
+            listingImageFile.value = "";
+            renderSelectedListingImages();
+        });
+
+        previewItem.appendChild(previewImage);
+        previewItem.appendChild(removeButton);
+
+        if (index === 0) {
+            const primaryBadge = document.createElement("span");
+            primaryBadge.className = "listing-image-primary-badge";
+            primaryBadge.textContent = "Titelbild";
+            previewItem.appendChild(primaryBadge);
+        }
+
+        listingImagesPreviewGrid.appendChild(previewItem);
+    });
+}
+
+function resetSelectedListingImages() {
+    releaseSelectedListingPreviewUrls();
+
+    selectedListingImageFiles = [];
+
+    listingImageFile.value = "";
+    listingImageInput.value = "";
+    listingImagesPreviewGrid.innerHTML = "";
+
+    updateSelectedListingFileName();
+}
+
+async function uploadNewListingImages(files, token) {
+    if (!Array.isArray(files) || files.length === 0) {
+        return [];
+    }
+
     const formData = new FormData();
 
-    formData.append("image", file);
+    files.forEach((file) => {
+        formData.append("images", file);
+    });
 
     const response = await fetch(
-        "https://cardora-backend-m9d0.onrender.com/api/uploads/image",
+        "https://cardora-backend-m9d0.onrender.com/api/uploads/images",
         {
             method: "POST",
             headers: {
@@ -556,17 +645,29 @@ async function uploadNewListingImage(file, token) {
         throw new Error(
             data.message ||
             data.error ||
-            "Das Bild konnte nicht hochgeladen werden."
+            "Die Bilder konnten nicht hochgeladen werden."
         );
     }
 
-    if (!data.imageUrl) {
+    if (!Array.isArray(data.images)) {
         throw new Error(
-            "Der Bild-Upload hat keine Bildadresse zurückgegeben."
+            "Der Bild-Upload hat keine gültige Bilderliste zurückgegeben."
         );
     }
 
-    return data.imageUrl;
+    return data.images.map((imageItem, index) => {
+        if (!imageItem?.imageUrl) {
+            throw new Error(
+                "Mindestens ein hochgeladenes Bild hat keine Bildadresse."
+            );
+        }
+
+        return {
+            imageUrl: imageItem.imageUrl,
+            publicId: imageItem.publicId || null,
+            sortOrder: index
+        };
+    });
 }
 
 function showToast(title, message) {
@@ -904,20 +1005,14 @@ document.addEventListener("keydown", (event) => {
 listingImageFile.addEventListener(
     "change",
     () => {
-        const file =
-            listingImageFile.files[0];
+        const incomingFiles =
+            Array.from(listingImageFile.files || []);
 
-        if (!file) {
-    selectedListingImageFile = null;
+        listingImageFile.value = "";
 
-    listingImageFileName.textContent =
-        "Keine Datei ausgewählt";
-
-    listingImagePreview.removeAttribute("src");
-    listingImagePreview.hidden = true;
-
-    return;
-}
+        if (incomingFiles.length === 0) {
+            return;
+        }
 
         const allowedTypes = [
             "image/jpeg",
@@ -925,64 +1020,80 @@ listingImageFile.addEventListener(
             "image/webp"
         ];
 
-        if (!allowedTypes.includes(file.type)) {
-    listingImageFile.value = "";
-    selectedListingImageFile = null;
-
-    listingImageFileName.textContent =
-        "Keine Datei ausgewählt";
-
-    listingImagePreview.removeAttribute("src");
-    listingImagePreview.hidden = true;
-
-    showToast(
-        "Ungültiges Bild",
-        "Bitte wähle ein JPG-, PNG- oder WEBP-Bild aus."
-    );
-
-    return;
-}
-
         const maximumFileSize =
             5 * 1024 * 1024;
 
-        if (file.size > maximumFileSize) {
-    listingImageFile.value = "";
-    selectedListingImageFile = null;
+        let invalidTypeCount = 0;
+        let tooLargeCount = 0;
+        let duplicateCount = 0;
+        let overflowCount = 0;
 
-    listingImageFileName.textContent =
-        "Keine Datei ausgewählt";
-
-    listingImagePreview.removeAttribute("src");
-    listingImagePreview.hidden = true;
-
-    showToast(
-        "Bild zu groß",
-        "Das Bild darf maximal 5 MB groß sein."
-    );
-
-    return;
-}
-
-        selectedListingImageFile = file;
-
-listingImageFileName.textContent =
-    file.name;
-
-        const reader = new FileReader();
-
-        reader.addEventListener(
-            "load",
-            () => {
-                listingImagePreview.src =
-                    reader.result;
-
-                listingImagePreview.hidden =
-                    false;
+        incomingFiles.forEach((file) => {
+            if (!allowedTypes.includes(file.type)) {
+                invalidTypeCount += 1;
+                return;
             }
-        );
 
-        reader.readAsDataURL(file);
+            if (file.size > maximumFileSize) {
+                tooLargeCount += 1;
+                return;
+            }
+
+            const alreadySelected =
+                selectedListingImageFiles.some(
+                    (selectedFile) =>
+                        selectedFile.name === file.name &&
+                        selectedFile.size === file.size &&
+                        selectedFile.lastModified === file.lastModified
+                );
+
+            if (alreadySelected) {
+                duplicateCount += 1;
+                return;
+            }
+
+            if (selectedListingImageFiles.length >= 8) {
+                overflowCount += 1;
+                return;
+            }
+
+            selectedListingImageFiles.push(file);
+        });
+
+        renderSelectedListingImages();
+
+        const rejectedReasons = [];
+
+        if (invalidTypeCount > 0) {
+            rejectedReasons.push(
+                `${invalidTypeCount} Datei${invalidTypeCount === 1 ? "" : "en"} hatte${invalidTypeCount === 1 ? "" : "n"} ein ungültiges Format`
+            );
+        }
+
+        if (tooLargeCount > 0) {
+            rejectedReasons.push(
+                `${tooLargeCount} Bild${tooLargeCount === 1 ? "" : "er"} war${tooLargeCount === 1 ? "" : "en"} größer als 5 MB`
+            );
+        }
+
+        if (duplicateCount > 0) {
+            rejectedReasons.push(
+                `${duplicateCount} Bild${duplicateCount === 1 ? "" : "er"} war${duplicateCount === 1 ? "" : "en"} bereits ausgewählt`
+            );
+        }
+
+        if (overflowCount > 0) {
+            rejectedReasons.push(
+                "maximal 8 Bilder sind erlaubt"
+            );
+        }
+
+        if (rejectedReasons.length > 0) {
+            showToast(
+                "Einige Bilder nicht übernommen",
+                `${rejectedReasons.join(", ")}.`
+            );
+        }
     }
 );
 
@@ -1023,6 +1134,8 @@ listingForm.addEventListener("submit", async (event) => {
     let image =
         listingImageInput.value.trim();
 
+    let images = [];
+
     const description =
         document.getElementById("listingDescription").value.trim();
 
@@ -1050,14 +1163,18 @@ listingForm.addEventListener("submit", async (event) => {
     const token =
         await Clerk.session.getToken();
 
-    if (selectedListingImageFile) {
+    if (selectedListingImageFiles.length > 0) {
         publishListingButton.textContent =
-            "Bild wird hochgeladen …";
+            `${selectedListingImageFiles.length} Bild${selectedListingImageFiles.length === 1 ? "" : "er"} werden hochgeladen …`;
 
-        image = await uploadNewListingImage(
-            selectedListingImageFile,
+        images = await uploadNewListingImages(
+            selectedListingImageFiles,
             token
         );
+
+        image =
+            images[0]?.imageUrl ||
+            "";
 
         listingImageInput.value = image;
     }
@@ -1082,6 +1199,7 @@ listingForm.addEventListener("submit", async (event) => {
                     language,
                     shipping,
                     image,
+                    images,
                     description
                 })
             }
@@ -1098,16 +1216,7 @@ listingForm.addEventListener("submit", async (event) => {
 
         listingForm.reset();
 
-selectedListingImageFile = null;
-
-listingImageFile.value = "";
-listingImageInput.value = "";
-
-listingImageFileName.textContent =
-    "Keine Datei ausgewählt";
-
-listingImagePreview.removeAttribute("src");
-listingImagePreview.hidden = true;
+resetSelectedListingImages();
 
 publishListingButton.disabled = false;
 publishListingButton.textContent =
