@@ -31,6 +31,9 @@ const listingImageFile =
 const listingImagePreview =
     document.getElementById("listingImagePreview");
 
+const listingImageFileName =
+    document.getElementById("listingImageFileName");
+
 const listingImageInput =
     document.getElementById("listingImage");
 
@@ -905,13 +908,16 @@ listingImageFile.addEventListener(
             listingImageFile.files[0];
 
         if (!file) {
-            selectedListingImageFile = null;
+    selectedListingImageFile = null;
 
-            listingImagePreview.src = "";
-            listingImagePreview.hidden = true;
+    listingImageFileName.textContent =
+        "Keine Datei ausgewählt";
 
-            return;
-        }
+    listingImagePreview.removeAttribute("src");
+    listingImagePreview.hidden = true;
+
+    return;
+}
 
         const allowedTypes = [
             "image/jpeg",
@@ -953,6 +959,9 @@ listingImageFile.addEventListener(
         }
 
         selectedListingImageFile = file;
+
+        listingImageFileName.textContent =
+    "Keine Datei ausgewählt";
 
         const reader = new FileReader();
 
